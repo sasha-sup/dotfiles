@@ -1,0 +1,151 @@
+# ~/.zshrc — managed setup with Oh My Zsh + Powerlevel10k
+
+# Enable Powerlevel10k instant prompt (must stay near the top)
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# ---------- Oh My Zsh ----------
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+plugins=(
+    git
+    sudo
+    docker
+    docker-compose
+    kubectl
+    colored-man-pages
+    command-not-found
+    extract
+    z
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+)
+
+HIST_STAMPS="yyyy-mm-dd"
+
+source $ZSH/oh-my-zsh.sh
+
+# ---------- Zsh options ----------
+setopt autocd
+setopt interactivecomments
+setopt magicequalsubst
+setopt nonomatch
+setopt notify
+setopt numericglobsort
+setopt promptsubst
+setopt extended_history
+
+WORDCHARS=${WORDCHARS//\/}
+PROMPT_EOL_MARK=""
+
+# ---------- History ----------
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+setopt share_history
+alias history="history 0"
+
+# ---------- Key bindings ----------
+bindkey -e
+bindkey ' ' magic-space
+bindkey '^U' backward-kill-line
+bindkey '^[[3;5~' kill-word
+bindkey '^[[3~' delete-char
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+bindkey '^[[5~' beginning-of-buffer-or-history
+bindkey '^[[6~' end-of-buffer-or-history
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[Z' undo
+
+# ---------- Completion tuning ----------
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete
+zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' rehash true
+zstyle ':completion:*' verbose true
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+# ---------- Colors / less ----------
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    export LS_COLORS="$LS_COLORS:ow=30;44:"
+    zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+    zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+fi
+
+export LESS_TERMCAP_mb=$'\E[1;31m'
+export LESS_TERMCAP_md=$'\E[1;36m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;33m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[1;32m'
+export LESS_TERMCAP_ue=$'\E[0m'
+
+# Autosuggestion color
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#999'
+
+# ---------- Aliases ----------
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip --color=auto'
+alias la='ls -A'
+alias l='ls -CF'
+alias ll="ls -lah"
+
+alias alias-help='grep "^alias" ~/.zshrc | sed -E "s/^alias\s*([^=]+)=(.*)$/\1: \2/"'
+
+alias update='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
+alias apt="sudo apt"
+alias shutdown="sudo shutdown -P now"
+alias reboot="systemctl reboot"
+
+alias virsh="virsh --connect qemu:///system"
+alias k="/usr/local/bin/kubectl"
+
+# User scripts
+SCRIPTS_BASE="$HOME/Code/private/studies/stuff/bash/user-script"
+alias hdmi-on="bash $SCRIPTS_BASE/hdmi-output.sh"
+alias hdd-mount="bash $SCRIPTS_BASE/mount-external-hdd.sh"
+alias telega-update="bash $SCRIPTS_BASE/telega-update.sh"
+alias py-venv="bash $SCRIPTS_BASE/py-venv.sh"
+alias hr-match="bash $HOME/Code/private/HR-Resume-Matcher/hr_match.sh"
+alias wifi="bash $SCRIPTS_BASE/connect-to-wifi.sh"
+alias vpn="bash $SCRIPTS_BASE/vpn.sh"
+alias ssh-me="bash $SCRIPTS_BASE/ssh-me.sh"
+alias ssh-port-forward="bash $SCRIPTS_BASE/ssh-port-forward.sh"
+alias ssh-proxy="bash $SCRIPTS_BASE/ssh-proxy.sh"
+alias kube-context="bash $SCRIPTS_BASE/kube-context.sh"
+alias kube-exec="bash $SCRIPTS_BASE/kube-exec.sh"
+alias work="bash $SCRIPTS_BASE/start-vms.sh"
+
+# ---------- Environment ----------
+export EDITOR="$(which vim)"
+export PATH="$PATH:/usr/local/go/bin"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Local bin env
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+
+# bash completion (for tools that only ship bash completions)
+[ -f /etc/profile.d/bash_completion.sh ] && source /etc/profile.d/bash_completion.sh
+
+# ---------- Powerlevel10k user config ----------
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
