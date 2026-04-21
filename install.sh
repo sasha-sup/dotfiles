@@ -13,6 +13,7 @@ mkdir -p "$HOME/.config/i3" "$HOME/.config/polybar" \
 ln -sfn "$DOTFILES_DIR/i3/config"            "$HOME/.config/i3/config"
 ln -sfn "$DOTFILES_DIR/polybar/config.ini"   "$HOME/.config/polybar/config.ini"
 ln -sfn "$DOTFILES_DIR/polybar/launch.sh"    "$HOME/.config/polybar/launch.sh"
+ln -sfn "$DOTFILES_DIR/polybar/wifi-menu.sh" "$HOME/.config/polybar/wifi-menu.sh"
 ln -sfn "$DOTFILES_DIR/picom/picom.conf"     "$HOME/.config/picom/picom.conf"
 ln -sfn "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
 
