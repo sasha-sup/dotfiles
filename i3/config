@@ -40,13 +40,13 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock -u /home/sasha/Pic
 # exec_always feh --bg-scale /usr/share/images/desktop-base/default
 exec_always feh --bg-scale /home/sasha/Pictures/wallpapers/win-xp-linux.png
 exec_always --no-startup-id "setxkbmap -layout us,ru -option grp:win_space_toggle"
-exec_always /bin/bash /home/sasha/Code/private/studies/stuff/bash/user-script/fan-speed.sh
-exec_always /bin/bash /home/sasha/Code/private/studies/stuff/bash/user-script/bat-lifetime.sh
-exec_always /bin/bash /home/sasha/Code/private/studies/stuff/bash/user-script/bat-low-alert.sh
-exec_always /bin/bash /home/sasha/Code/private/studies/stuff/bash/user-script/kb-bat-low-alert.sh
-exec_always /bin/bash /home/sasha/Code/private/studies/stuff/bash/user-script/mouse-bat-low-alert.sh
-exec_always /bin/bash /home/sasha/Code/private/studies/stuff/bash/user-script/get-my-weather.sh
-exec_always /bin/bash /home/sasha/Code/private/studies/stuff/bash/user-script/hdmi-output.sh
+exec_always /bin/bash $HOME/.local/bin/fan-speed.sh
+exec_always /bin/bash $HOME/.local/bin/bat-lifetime.sh
+exec_always /bin/bash $HOME/.local/bin/bat-low-alert.sh
+exec_always /bin/bash $HOME/.local/bin/bat-low-alert-keyboard.sh
+exec_always /bin/bash $HOME/.local/bin/bat-low-alert-mouse.sh
+exec_always /bin/bash $HOME/.local/bin/get-my-weather.sh
+exec_always /bin/bash $HOME/.local/bin/hdmi-output.sh
 exec_always --no-startup-id xset s off
 exec_always --no-startup-id xset s noblank
 exec_always --no-startup-id xset -dpms

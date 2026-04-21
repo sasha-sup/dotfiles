@@ -33,7 +33,7 @@ print_battery_status() {
     elif [[ "$state" == "charging" ]]; then
         bat_status_display="󰂄"
         formatted_time_to_full=$(format_time "$time_to_full")
-        output="${bat_status_display} ${percentage}% 󰔟 ${formatted_time_to_full}"
+        output="${bat_status_display} ${percentage}%"  #󰔟 ${formatted_time_to_full}"
     elif [[ "$state" == "discharging" ]]; then
         if [[ "$percentage" -ge 80 ]]; then
             bat_status_display="󰂁"
@@ -47,7 +47,7 @@ print_battery_status() {
             bat_status_display="󰁺"
         fi
         formatted_time_to_empty=$(format_time "$time_to_empty")
-        output="${bat_status_display} ${percentage}% 󰔟 ${formatted_time_to_empty}"
+        output="${bat_status_display} ${percentage}%" # 󰔟 ${formatted_time_to_empty}"
     else
         bat_status_display="󰂎"
         output="${bat_status_display} ${percentage}%"

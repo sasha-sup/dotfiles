@@ -117,7 +117,7 @@ alias virsh="virsh --connect qemu:///system"
 alias k="/usr/local/bin/kubectl"
 
 # User scripts
-SCRIPTS_BASE="$HOME/Code/private/studies/stuff/bash/user-script"
+SCRIPTS_BASE="$HOME/.local/bin"
 alias hdmi-on="bash $SCRIPTS_BASE/hdmi-output.sh"
 alias hdd-mount="bash $SCRIPTS_BASE/mount-external-hdd.sh"
 alias telega-update="bash $SCRIPTS_BASE/telega-update.sh"
