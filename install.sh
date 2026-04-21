@@ -43,6 +43,12 @@ if ! command -v zsh >/dev/null 2>&1; then
     echo "WARNING: zsh is not installed. Install it first: sudo apt install zsh"
 fi
 
+# --- fzf (fuzzy finder for Ctrl-R / Ctrl-T / Alt-C in zsh) ---
+if ! command -v fzf >/dev/null 2>&1; then
+    echo "Installing fzf..."
+    sudo apt install -y fzf || echo "WARNING: fzf install failed. Run manually: sudo apt install fzf"
+fi
+
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
     RUNZSH=no KEEP_ZSHRC=yes sh -c \

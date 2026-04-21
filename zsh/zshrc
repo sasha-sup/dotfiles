@@ -147,5 +147,11 @@ export NVM_DIR="$HOME/.nvm"
 # bash completion (for tools that only ship bash completions)
 [ -f /etc/profile.d/bash_completion.sh ] && source /etc/profile.d/bash_completion.sh
 
+# ---------- fzf (fuzzy finder: Ctrl-R history, Ctrl-T files, Alt-C dirs) ----------
+if command -v fzf >/dev/null 2>&1; then
+    [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+    [ -f /usr/share/doc/fzf/examples/completion.zsh ]   && source /usr/share/doc/fzf/examples/completion.zsh
+fi
+
 # ---------- Powerlevel10k user config ----------
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
