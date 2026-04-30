@@ -40,9 +40,11 @@ EXCLUDES=(
     .vscode/
     .idea/
 
-    # OMC state
+    # AI state
     .omc/
     .omx/
+    .claude/
+    .codex/
 
     # Browser profiles
     .mozilla/
