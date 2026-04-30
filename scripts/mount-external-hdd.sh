@@ -53,6 +53,7 @@ ensure_cmd mountpoint util-linux
 ensure_cmd cryptsetup cryptsetup
 ensure_cmd mount util-linux
 ensure_cmd umount util-linux
+ensure_cmd smartctl smartmontools
 
 if mountpoint -q "$MOUNT_POINT"; then
     echo "Unmounting ${MOUNT_POINT}..."
@@ -94,3 +95,33 @@ if ! sudo mount "$MAPPED_DEVICE" "$MOUNT_POINT"; then
 fi
 
 echo "Mounted successfully."
+
+parent_disk=$(lsblk -no PKNAME "$device" 2>/dev/null | head -n1)
+if [ -n "$parent_disk" ]; then
+    smart_target="/dev/${parent_disk}"
+    transport=$(lsblk -no TRAN "/dev/${parent_disk}" 2>/dev/null | head -n1)
+else
+    smart_target="$device"
+    transport=""
+fi
+
+if [ "$transport" = "usb" ]; then
+    smart_types=(sat usbjmicron usbprolific usbsunplus scsi auto)
+else
+    smart_types=(auto)
+fi
+
+echo "Running SMART health check on ${smart_target}..."
+smart_ok=0
+for t in "${smart_types[@]}"; do
+    if smart_output=$(sudo smartctl -H -d "$t" "$smart_target" 2>&1); then
+        echo "$smart_output"
+        echo "(SMART device type: ${t})"
+        smart_ok=1
+        break
+    fi
+done
+
+if [ "$smart_ok" -eq 0 ]; then
+    echo "Warning: SMART health check reported issues on ${smart_target} (tried: ${smart_types[*]})." >&2
+fi
