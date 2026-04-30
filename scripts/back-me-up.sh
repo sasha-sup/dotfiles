@@ -63,9 +63,10 @@ encrypt_dir "$HOME/.kube"               "kube"
 encrypt_dir "$HOME/.config/gh"          "gh"
 encrypt_dir "$HOME/.aws"                "aws"
 encrypt_dir "$HOME/.config/dotfiles.env" "dotfiles_env"
+encrypt_dir "$HOME/.config/rclone"      "rclone"
 
-# Encrypted snapshots rotate slower (14 days) since they change rarely
-find "$SECRETS_DIR/" -type f -name "*.gpg" -mtime +14 -exec rm {} \;
+# Encrypted snapshots rotate after 3 days
+find "$SECRETS_DIR/" -type f -name "*.gpg" -mtime +3 -exec rm {} \;
 
 # Rotate: drop plain snapshots older than 3 days (secrets dir handled above)
 find "$BASE_DIR/" -maxdepth 1 -type f -name "*_*" -mtime +3 -exec rm {} \;
