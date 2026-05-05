@@ -46,7 +46,7 @@ Distributed into `~/.local/bin/` by `install.sh`. Referenced from i3 and zshrc b
 | `connect-to-wifi.sh` | Interactive CLI wifi connect (alternative to polybar picker) |
 | `vpn.sh` | Launch VPN client |
 | `mount-external-hdd.sh` | Toggle LUKS-encrypted external drive (UUID from env) |
-| `start-vms.sh` | Toggle libvirt VMs on i3 workspaces (names/workspaces from env) |
+| `start-vms.sh` | Toggle libvirt VMs on one tabbed i3 workspace (names/workspace from env) |
 | `telega-update.sh` | Update Telegram Desktop |
 | `py-venv.sh` | Create a Python venv in a given project dir |
 | `kube-context.sh` / `kube-exec.sh` | Pick kube context / exec into a pod by prefix |
