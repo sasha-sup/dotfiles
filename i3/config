@@ -111,6 +111,7 @@ bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons -font "JetBrains
 # bindsym $mod+k focus down
 # bindsym $mod+l focus up
 # bindsym $mod+semicolon focus right
+bindsym $mod+Tab focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus output left
