@@ -57,6 +57,7 @@ Distributed into `~/.local/bin/` by `install.sh`. Referenced from i3 and zshrc b
 | `ext-hhd-loca-bup.sh` | Full rsync snapshot of $HOME to external drive |
 | `push-my-dir.sh` | Auto-commit + push a list of repos (from env) |
 | `ssd-healthchecker.sh` | NVMe SMART watchdog with Telegram alerts |
+| `pipewire-startup-recover.sh` | Restarts PipeWire after login only if startup left audio on `Dummy Output` |
 
 Plus `polybar/wifi-menu.sh` — rofi-based wifi picker launched from the polybar Network module.
 
@@ -76,7 +77,9 @@ cd ~/Code/private/dotfiles
 ./install.sh
 ```
 
-`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, fonts into `~/.local/share/fonts/`, and sets up Oh My Zsh + Powerlevel10k.
+`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fonts into `~/.local/share/fonts/`, and sets up Oh My Zsh + Powerlevel10k.
+
+The PipeWire startup recovery user service is enabled by `install.sh`; if user systemd is unavailable during install, rerun `systemctl --user enable pipewire-startup-recover.service` after login.
 
 ## Personal values (`~/.config/dotfiles.env`)
 

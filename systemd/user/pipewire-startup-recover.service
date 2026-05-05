@@ -1,0 +1,10 @@
+[Unit]
+Description=Recover PipeWire when startup leaves only Dummy Output
+After=pipewire.service pipewire-pulse.service wireplumber.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/pipewire-startup-recover.sh
+
+[Install]
+WantedBy=default.target

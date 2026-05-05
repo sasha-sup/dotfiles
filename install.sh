@@ -7,7 +7,8 @@ echo "=== Dotfiles Installer ==="
 
 # --- Config directories ---
 mkdir -p "$HOME/.config/i3" "$HOME/.config/polybar" \
-         "$HOME/.config/picom" "$HOME/.config/kitty"
+         "$HOME/.config/picom" "$HOME/.config/kitty" \
+         "$HOME/.config/systemd/user"
 
 # --- Configs ---
 ln -sfn "$DOTFILES_DIR/i3/config"            "$HOME/.config/i3/config"
@@ -28,6 +29,14 @@ mkdir -p "$SCRIPTS_DIR"
 for script in "$DOTFILES_DIR"/scripts/*.sh; do
     ln -sfn "$script" "$SCRIPTS_DIR/$(basename "$script")"
 done
+
+# --- User services ---
+ln -sfn "$DOTFILES_DIR/systemd/user/pipewire-startup-recover.service" \
+       "$HOME/.config/systemd/user/pipewire-startup-recover.service"
+systemctl --user daemon-reload >/dev/null 2>&1 || \
+    echo "WARNING: systemctl --user daemon-reload failed. Run it after login."
+systemctl --user enable pipewire-startup-recover.service >/dev/null 2>&1 || \
+    echo "WARNING: pipewire-startup-recover.service was not enabled. Run: systemctl --user enable pipewire-startup-recover.service"
 
 # --- Fonts (MesloLGS NF for Powerlevel10k) ---
 FONT_DIR="$HOME/.local/share/fonts"
