@@ -14,6 +14,7 @@ i3wm rice on Debian Trixie (ThinkPad T14)
 - **Launcher:** Rofi
 - **Shell:** Zsh + Oh My Zsh + Powerlevel10k + fzf
 - **Font:** JetBrainsMono Nerd Font
+- **Emoji:** Noto Color Emoji via fontconfig fallback
 - **Wallpaper:** Custom Win XP / Linux mashup
 
 ## Polybar Modules
@@ -66,7 +67,7 @@ Plus `polybar/wifi-menu.sh` — rofi-based wifi picker launched from the polybar
 ```bash
 sudo apt install i3 polybar picom kitty rofi feh flameshot \
     blueman network-manager brightnessctl pulseaudio-utils \
-    fonts-jetbrains-mono fzf
+    fonts-jetbrains-mono fonts-noto-color-emoji fzf
 ```
 
 ## Install
@@ -77,7 +78,7 @@ cd ~/Code/private/dotfiles
 ./install.sh
 ```
 
-`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fonts into `~/.local/share/fonts/`, and sets up Oh My Zsh + Powerlevel10k.
+`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fontconfig emoji fallback into `~/.config/fontconfig/conf.d/`, fonts into `~/.local/share/fonts/`, and sets up Oh My Zsh + Powerlevel10k.
 
 The PipeWire startup recovery user service is enabled by `install.sh`; if user systemd is unavailable during install, rerun `systemctl --user enable pipewire-startup-recover.service` after login.
 
@@ -146,6 +147,9 @@ dotfiles/
 ├── zsh/
 │   ├── zshrc
 │   └── p10k.zsh
+├── fontconfig/
+│   └── conf.d/
+│       └── 01-prefer-color-emoji.conf
 ├── scripts/
 │   ├── dotfiles.env.example  # template for ~/.config/dotfiles.env
 │   ├── *.sh                  # symlinked into ~/.local/bin/

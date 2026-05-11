@@ -8,7 +8,8 @@ echo "=== Dotfiles Installer ==="
 # --- Config directories ---
 mkdir -p "$HOME/.config/i3" "$HOME/.config/polybar" \
          "$HOME/.config/picom" "$HOME/.config/kitty" \
-         "$HOME/.config/systemd/user"
+         "$HOME/.config/systemd/user" \
+         "$HOME/.config/fontconfig/conf.d"
 
 # --- Configs ---
 ln -sfn "$DOTFILES_DIR/i3/config"            "$HOME/.config/i3/config"
@@ -17,6 +18,8 @@ ln -sfn "$DOTFILES_DIR/polybar/launch.sh"    "$HOME/.config/polybar/launch.sh"
 ln -sfn "$DOTFILES_DIR/polybar/wifi-menu.sh" "$HOME/.config/polybar/wifi-menu.sh"
 ln -sfn "$DOTFILES_DIR/picom/picom.conf"     "$HOME/.config/picom/picom.conf"
 ln -sfn "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
+ln -sfn "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
+       "$HOME/.config/fontconfig/conf.d/01-prefer-color-emoji.conf"
 
 # --- Wallpapers ---
 mkdir -p "$HOME/Pictures/wallpapers"
