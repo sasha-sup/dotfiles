@@ -16,15 +16,26 @@ EXCLUDES=(
     .thumbnails/
     .Trash*/
 
-    # Package manager stores
-    .cargo/registry/
+    # Package manager stores / toolchains (regenerable)
+    .cargo/
     .m2/repository/
     .nuget/
+    .npm/
+    .nvm/
+    .rustup/
+    .gradle/
+    .dotnet/
+    .java/
+    .swt/
+    .gem/
+    .oh-my-zsh/
+    .local/share/pnpm/
 
     # Runtime / state
     .local/share/Steam/
     .steam/
     snap/
+    .docker/
 
     # Build artifacts and venvs
     node_modules/
@@ -33,18 +44,24 @@ EXCLUDES=(
     .tox/
     target/
 
-    # Git internals inside projects
-    Code/**/.git/
-
-    # IDE / editor state
+    # IDE / editor state (regenerable)
     .vscode/
+    .vscode-shared/
     .idea/
+    .config/Code/
+    .config/Freelens/
 
     # AI state
     .omc/
     .omx/
     .claude/
     .codex/
+    .local/share/claude/
+
+    # Shell init artifacts
+    .zcompdump*
+    .wget-hsts
+    .bash_logout
 
     # Browser profiles
     .mozilla/
