@@ -11,7 +11,15 @@ if [ -z "${VMS+x}" ] || [ "${#VMS[@]}" -eq 0 ]; then
     exit 1
 fi
 
-if virsh -c qemu:///system list --all | grep -q "shut off"; then
+# Count how many of OUR VMs are currently running.
+running=0
+for vm in "${VMS[@]}"; do
+    if virsh -c qemu:///system domstate "$vm" 2>/dev/null | grep -q "running"; then
+        running=$((running + 1))
+    fi
+done
+
+if [ "$running" -eq 0 ]; then
     for i in "${!VMS[@]}"; do
         vm="${VMS[$i]}"
         ws="${VM_WORKSPACES[$i]:-${VM_WORKSPACE:-}}"
@@ -21,7 +29,7 @@ if virsh -c qemu:///system list --all | grep -q "shut off"; then
         fi
     done
 else
-    for vm in $(virsh -c qemu:///system list --name); do
+    for vm in "${VMS[@]}"; do
         virsh -c qemu:///system shutdown "$vm"
     done
 fi
