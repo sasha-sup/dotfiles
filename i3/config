@@ -84,12 +84,12 @@ smart_borders on
 
 # Цвета окон
 # class                 border  backgr  text    indicator child_border
-client.focused          #0088CC #0088CC #ffffff #00A5FF   #0088CC
-client.focused_inactive #333333 #222222 #888888 #484e50   #333333
-client.unfocused        #333333 #222222 #888888 #292d2e   #222222
-client.urgent           #FF0000 #FF0000 #ffffff #FF0000   #FF0000
-client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
-client.background       #1a1a2e
+client.focused          #f92aad #f92aad #ffffff #36f9f6   #f92aad
+client.focused_inactive #2a2139 #2a2139 #848bbd #484e50   #2a2139
+client.unfocused        #241b2f #241b2f #848bbd #292d2e   #241b2f
+client.urgent           #fe4450 #fe4450 #ffffff #fe4450   #fe4450
+client.placeholder      #000000 #241b2f #ffffff #000000   #241b2f
+client.background       #241b2f
 
 # start a terminal
 set $terminal kitty

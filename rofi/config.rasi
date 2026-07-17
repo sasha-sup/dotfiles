@@ -1,0 +1,96 @@
+/* rofi synthwave theme — matches kitty/polybar/i3 palette */
+configuration {
+    modi:                "drun,run,window";
+    show-icons:          true;
+    drun-display-format: "{name}";
+    display-drun:        " ";
+    display-run:         " ";
+    display-window:      " ";
+}
+
+* {
+    bg:        #241b2f;
+    bg-alt:    #2a2139;
+    fg:        #f0eff1;
+    fg-dim:    #848bbd;
+    accent:    #f92aad;
+    accent2:   #36f9f6;
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    background-color: @bg;
+    border:           2px;
+    border-color:     @accent;
+    border-radius:    12px;
+    width:            560px;
+    padding:          0;
+}
+
+mainbox {
+    padding: 14px;
+    spacing: 12px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius:    8px;
+    padding:          10px 14px;
+    spacing:          10px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color: @accent;
+}
+
+entry {
+    placeholder:       "search…";
+    placeholder-color: @fg-dim;
+    cursor:            text;
+}
+
+listview {
+    lines:            8;
+    columns:          1;
+    fixed-height:     false;
+    scrollbar:        false;
+    spacing:          4px;
+    background-color: @bg;
+    text-color:       @fg;
+}
+
+element {
+    padding:          8px 12px;
+    spacing:          12px;
+    border-radius:    8px;
+    background-color: @bg;
+    text-color:       @fg;
+}
+
+/* все невыделенные состояния — светлый текст на тёмном фоне */
+element normal.normal    { background-color: @bg; text-color: @fg; }
+element normal.urgent    { background-color: @bg; text-color: @accent; }
+element normal.active    { background-color: @bg; text-color: @accent2; }
+element alternate.normal { background-color: @bg; text-color: @fg; }
+element alternate.urgent { background-color: @bg; text-color: @accent; }
+element alternate.active { background-color: @bg; text-color: @accent2; }
+
+/* выделенное — розовый фон, белый текст */
+element selected.normal  { background-color: @accent; text-color: #ffffff; }
+element selected.urgent  { background-color: @accent; text-color: #ffffff; }
+element selected.active  { background-color: @accent; text-color: #ffffff; }
+
+element-icon {
+    size:             1.2em;
+    vertical-align:   0.5;
+    background-color: transparent;
+}
+
+element-text {
+    vertical-align:   0.5;
+    background-color: transparent;
+    text-color:       inherit;
+}
