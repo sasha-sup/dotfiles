@@ -60,18 +60,19 @@ case "$chosen" in
         ;;
 esac
 
-# Extract SSID: drop leading marker+spaces, then strip trailing "  [sec] NN%".
-ssid=$(printf "%s" "$chosen" | sed -E 's/^[^ ]+  //; s/  \[[^]]*\] [0-9]+%$//')
+# Extract SSID: drop optional "●" marker, strip leading spaces, then trailing "  [sec] NN%".
+# Inactive networks have a blank marker, so the old "^[^ ]+  " left leading spaces in the SSID.
+ssid=$(printf "%s" "$chosen" | sed -E 's/^●//; s/^ +//; s/  \[[^]]*\] [0-9]+%$//')
 [[ -z "$ssid" ]] && exit 0
 
-# If a saved connection with this name exists, bring it up. Otherwise ask for a password when needed.
+# If a saved connection with this name exists, bring it up. On failure the saved secret is
+# likely stale, so delete the profile and fall through to a fresh password prompt.
 if nmcli -t -f NAME connection show 2>/dev/null | grep -Fxq "$ssid"; then
     if nmcli connection up id "$ssid" >/dev/null 2>&1; then
         notify "Connected" "$ssid"
-    else
-        notify "Connection failed" "$ssid"
+        exit 0
     fi
-    exit 0
+    nmcli connection delete id "$ssid" >/dev/null 2>&1
 fi
 
 security=$(printf "%s" "$chosen" | sed -nE 's/.*\[([^]]*)\].*/\1/p')
