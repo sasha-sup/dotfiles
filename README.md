@@ -49,6 +49,7 @@ Distributed into `~/.local/bin/` by `install.sh`. Referenced from i3 and zshrc b
 | `mount-external-hdd.sh` | Toggle LUKS-encrypted external drive (UUID from env) |
 | `start-vms.sh` | Toggle libvirt VMs on one tabbed i3 workspace (names/workspace from env) |
 | `telega-update.sh` | Update Telegram Desktop |
+| `ledger-install.sh` | Install/update Ledger Live Desktop AppImage into `~/.local/bin/` (sha512-verified against the official feed) |
 | `py-venv.sh` | Create a Python venv in a given project dir |
 | `kube-context.sh` / `kube-exec.sh` | Pick kube context / exec into a pod by prefix |
 | `ssh-me.sh` | Pick from personal SSH-connection scripts (dir from env) |
@@ -78,7 +79,7 @@ cd ~/Code/private/dotfiles
 ./install.sh
 ```
 
-`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fontconfig emoji fallback into `~/.config/fontconfig/conf.d/`, fonts into `~/.local/share/fonts/`, and sets up Oh My Zsh + Powerlevel10k.
+`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fontconfig emoji fallback into `~/.config/fontconfig/conf.d/`, fonts into `~/.local/share/fonts/`, desktop entries into `~/.local/share/applications/` with icons into `~/.local/share/icons/hicolor/`, and sets up Oh My Zsh + Powerlevel10k.
 
 The PipeWire startup recovery user service is enabled by `install.sh`; if user systemd is unavailable during install, rerun `systemctl --user enable pipewire-startup-recover.service` after login.
 
@@ -111,6 +112,25 @@ Start from `scripts/dotfiles.env.example` — copy it to `~/.config/dotfiles.env
    - Source the env as shown above.
    - Add a commented template block to `scripts/dotfiles.env.example`.
    - Set the real value in `~/.config/dotfiles.env`.
+
+### Adding an AppImage app to the rofi launcher
+
+`Alt+D` runs `rofi -show drun`, which only lists `.desktop` entries — an executable in `PATH` is not enough.
+
+1. Extract the bundled entry and icons from the AppImage:
+   ```bash
+   ./TheApp.AppImage --appimage-extract '*.desktop'
+   ./TheApp.AppImage --appimage-extract 'usr/share/icons/*'
+   ```
+2. Put the entry in `applications/<name>.desktop.in`, with `Exec=@HOME@/.local/bin/<name> ... %U`.
+   Never hardcode `/home/<user>` — `install.sh` expands `@HOME@`.
+3. Copy the PNGs to `icons/hicolor/<size>/apps/`.
+4. Add the copy loop and, if the binary should be auto-installed, an installer call to the
+   "Desktop entries + icons" section of `install.sh`.
+
+Install the AppImage into `~/.local/bin/`, **not** `/usr/local/bin/`. Electron's built-in updater
+replaces the AppImage in place, which needs write access to the containing directory; a root-owned
+directory makes every self-update fail with `EACCES: permission denied, unlink`.
 
 ### Adding a file/directory to backup
 
@@ -153,6 +173,9 @@ dotfiles/
 ├── scripts/
 │   ├── dotfiles.env.example  # template for ~/.config/dotfiles.env
 │   ├── *.sh                  # symlinked into ~/.local/bin/
+├── applications/
+│   └── *.desktop.in         # @HOME@ expanded into ~/.local/share/applications/
+├── icons/hicolor/           # app icons, copied into ~/.local/share/icons/hicolor/
 ├── fonts/                   # Powerlevel10k MesloLGS
 ├── wallpapers/
 ├── install.sh

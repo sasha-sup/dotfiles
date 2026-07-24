@@ -35,6 +35,31 @@ for script in "$DOTFILES_DIR"/scripts/*.sh; do
     ln -sfn "$script" "$SCRIPTS_DIR/$(basename "$script")"
 done
 
+# --- Desktop entries + icons (AppImage apps) ---
+APPS_DIR="$HOME/.local/share/applications"
+ICONS_DIR="$HOME/.local/share/icons/hicolor"
+mkdir -p "$APPS_DIR"
+
+# Generated, not symlinked: Exec= must be an absolute path, so @HOME@ is
+# expanded for the current user instead of being hardcoded in the repo.
+sed "s|@HOME@|$HOME|g" "$DOTFILES_DIR/applications/ledger-live-desktop.desktop.in" \
+    > "$APPS_DIR/ledger-live-desktop.desktop"
+
+for size in 128x128 256x256 512x512 1024x1024; do
+    mkdir -p "$ICONS_DIR/$size/apps"
+    install -m 644 "$DOTFILES_DIR/icons/hicolor/$size/apps/ledger-live-desktop.png" \
+                   "$ICONS_DIR/$size/apps/ledger-live-desktop.png"
+done
+
+if [ ! -x "$HOME/.local/bin/ledger" ]; then
+    echo "Installing Ledger Live Desktop AppImage..."
+    "$DOTFILES_DIR/scripts/ledger-install.sh" || \
+        echo "WARNING: Ledger install failed. Run manually: $DOTFILES_DIR/scripts/ledger-install.sh"
+fi
+
+update-desktop-database "$APPS_DIR" >/dev/null 2>&1 || true
+gtk-update-icon-cache -f -t "$ICONS_DIR" >/dev/null 2>&1 || true
+
 # --- User services ---
 ln -sfn "$DOTFILES_DIR/systemd/user/pipewire-startup-recover.service" \
        "$HOME/.config/systemd/user/pipewire-startup-recover.service"
