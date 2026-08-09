@@ -81,6 +81,15 @@ cd ~/Code/private/dotfiles
 
 `install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fontconfig emoji fallback into `~/.config/fontconfig/conf.d/`, fonts into `~/.local/share/fonts/`, desktop entries into `~/.local/share/applications/` with icons into `~/.local/share/icons/hicolor/`, and sets up Oh My Zsh + Powerlevel10k.
 
+### Symlinks, not copies
+
+Every tracked file is symlinked into place, so the live config and the repo are always the same file — editing either one edits both, and `git status` shows every local change. Two deliberate exceptions:
+
+- `applications/*.desktop` is generated with `sed`, because `Exec=` needs an absolute path that cannot be hardcoded in the repo.
+- Files holding personal data are never tracked and never symlinked: `~/.config/dotfiles.env` and `~/.zshrc.local` are seeded once from a template and then left alone.
+
+If a real file already exists where a symlink should go, `install.sh` moves it to `<file>.bak-<timestamp>` instead of deleting it, then links. Rerunning the script is safe and idempotent.
+
 The PipeWire startup recovery user service is enabled by `install.sh`; if user systemd is unavailable during install, rerun `systemctl --user enable pipewire-startup-recover.service` after login.
 
 ## Personal values (`~/.config/dotfiles.env`)
@@ -99,7 +108,11 @@ and require vars with `:?` so missing values fail loudly:
 SSH_HOST="${SSH_PROXY_HOST:?SSH_PROXY_HOST not set (see ~/.config/dotfiles.env)}"
 ```
 
-Start from `scripts/dotfiles.env.example` — copy it to `~/.config/dotfiles.env` and uncomment only the blocks you need.
+`install.sh` seeds `~/.config/dotfiles.env` from `scripts/dotfiles.env.example` on first run and never overwrites it afterwards — uncomment only the blocks you need.
+
+## Machine-local shell config (`~/.zshrc.local`)
+
+`zsh/zshrc` is shared across machines, so anything personal — internal IPs, host aliases, per-machine paths — goes into `~/.zshrc.local`, which is sourced at the end of `zshrc` and is neither tracked nor symlinked. `install.sh` creates an empty one if it is missing.
 
 ## Extending
 
@@ -125,7 +138,7 @@ Start from `scripts/dotfiles.env.example` — copy it to `~/.config/dotfiles.env
 2. Put the entry in `applications/<name>.desktop.in`, with `Exec=@HOME@/.local/bin/<name> ... %U`.
    Never hardcode `/home/<user>` — `install.sh` expands `@HOME@`.
 3. Copy the PNGs to `icons/hicolor/<size>/apps/`.
-4. Add the copy loop and, if the binary should be auto-installed, an installer call to the
+4. Add the `link` loop and, if the binary should be auto-installed, an installer call to the
    "Desktop entries + icons" section of `install.sh`.
 
 Install the AppImage into `~/.local/bin/`, **not** `/usr/local/bin/`. Electron's built-in updater
@@ -150,6 +163,7 @@ Cron runs the backup daily at 11:12. After it finishes, `push-my-dir.sh` pushes 
 ## Repo hygiene
 
 - `~/.config/dotfiles.env` — private, never commit.
+- `~/.zshrc.local` — private, never commit.
 - `scripts/dotfiles.env.example` — public template, safe to commit.
 - Do not hardcode: IPs, hostnames, usernames, emails, UUIDs, VM names, port numbers for personal servers, private repo paths. Put them in the env file.
 
@@ -175,8 +189,8 @@ dotfiles/
 │   ├── *.sh                  # symlinked into ~/.local/bin/
 ├── applications/
 │   └── *.desktop.in         # @HOME@ expanded into ~/.local/share/applications/
-├── icons/hicolor/           # app icons, copied into ~/.local/share/icons/hicolor/
-├── fonts/                   # Powerlevel10k MesloLGS
+├── icons/hicolor/           # app icons, symlinked into ~/.local/share/icons/hicolor/
+├── fonts/                   # Powerlevel10k MesloLGS, symlinked into ~/.local/share/fonts/
 ├── wallpapers/
 ├── install.sh
 └── README.md

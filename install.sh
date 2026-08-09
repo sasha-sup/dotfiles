@@ -2,37 +2,60 @@
 set -e
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+BACKUP_SUFFIX="bak-$(date +%Y%m%d%H%M%S)"
 
 echo "=== Dotfiles Installer ==="
 
-# --- Config directories ---
-mkdir -p "$HOME/.config/i3" "$HOME/.config/polybar" \
-         "$HOME/.config/picom" "$HOME/.config/kitty" \
-         "$HOME/.config/rofi" \
-         "$HOME/.config/systemd/user" \
-         "$HOME/.config/fontconfig/conf.d"
+# link SRC DEST — symlink DEST to SRC.
+# Everything tracked in this repo is symlinked, never copied, so editing the
+# repo is the same as editing the live config. A pre-existing real file at DEST
+# is moved aside to DEST.bak-<timestamp> instead of being silently destroyed.
+link() {
+    local src="$1" dest="$2"
+    mkdir -p "$(dirname "$dest")"
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+        mv "$dest" "$dest.$BACKUP_SUFFIX"
+        echo "  backed up existing $dest -> $dest.$BACKUP_SUFFIX"
+    fi
+    ln -sfn "$src" "$dest"
+}
 
 # --- Configs ---
-ln -sfn "$DOTFILES_DIR/i3/config"            "$HOME/.config/i3/config"
-ln -sfn "$DOTFILES_DIR/polybar/config.ini"   "$HOME/.config/polybar/config.ini"
-ln -sfn "$DOTFILES_DIR/polybar/launch.sh"    "$HOME/.config/polybar/launch.sh"
-ln -sfn "$DOTFILES_DIR/polybar/wifi-menu.sh" "$HOME/.config/polybar/wifi-menu.sh"
-ln -sfn "$DOTFILES_DIR/picom/picom.conf"     "$HOME/.config/picom/picom.conf"
-ln -sfn "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
-ln -sfn "$DOTFILES_DIR/rofi/config.rasi"     "$HOME/.config/rofi/config.rasi"
-ln -sfn "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
-       "$HOME/.config/fontconfig/conf.d/01-prefer-color-emoji.conf"
+link "$DOTFILES_DIR/i3/config"            "$HOME/.config/i3/config"
+link "$DOTFILES_DIR/polybar/config.ini"   "$HOME/.config/polybar/config.ini"
+link "$DOTFILES_DIR/polybar/launch.sh"    "$HOME/.config/polybar/launch.sh"
+link "$DOTFILES_DIR/polybar/wifi-menu.sh" "$HOME/.config/polybar/wifi-menu.sh"
+link "$DOTFILES_DIR/picom/picom.conf"     "$HOME/.config/picom/picom.conf"
+link "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
+link "$DOTFILES_DIR/rofi/config.rasi"     "$HOME/.config/rofi/config.rasi"
+link "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
+     "$HOME/.config/fontconfig/conf.d/01-prefer-color-emoji.conf"
+
+# --- Private data ---
+# dotfiles.env holds hosts, UUIDs and recipients, so it is never committed and
+# never symlinked: the repo only ships a template to seed it once.
+if [ ! -e "$HOME/.config/dotfiles.env" ]; then
+    mkdir -p "$HOME/.config"
+    cp "$DOTFILES_DIR/scripts/dotfiles.env.example" "$HOME/.config/dotfiles.env"
+    chmod 600 "$HOME/.config/dotfiles.env"
+    echo "Created ~/.config/dotfiles.env from the template — fill it in."
+fi
+# Same for machine-local zsh aliases sourced at the end of zsh/zshrc.
+if [ ! -e "$HOME/.zshrc.local" ]; then
+    printf '%s\n' \
+        '# Machine-local zsh config. Not committed to dotfiles.' \
+        '# Personal hosts, internal IPs and per-machine aliases live here.' \
+        > "$HOME/.zshrc.local"
+fi
 
 # --- Wallpapers ---
-mkdir -p "$HOME/Pictures/wallpapers"
-ln -sfn "$DOTFILES_DIR/wallpapers/win-xp-linux.png"      "$HOME/Pictures/wallpapers/win-xp-linux.png"
-ln -sfn "$DOTFILES_DIR/wallpapers/win-xp-linux-blur.png" "$HOME/Pictures/wallpapers/win-xp-linux-blur.png"
+link "$DOTFILES_DIR/wallpapers/win-xp-linux.png"      "$HOME/Pictures/wallpapers/win-xp-linux.png"
+link "$DOTFILES_DIR/wallpapers/win-xp-linux-blur.png" "$HOME/Pictures/wallpapers/win-xp-linux-blur.png"
 
 # --- Scripts ---
 SCRIPTS_DIR="$HOME/.local/bin"
-mkdir -p "$SCRIPTS_DIR"
 for script in "$DOTFILES_DIR"/scripts/*.sh; do
-    ln -sfn "$script" "$SCRIPTS_DIR/$(basename "$script")"
+    link "$script" "$SCRIPTS_DIR/$(basename "$script")"
 done
 
 # --- Desktop entries + icons (AppImage apps) ---
@@ -46,9 +69,8 @@ sed "s|@HOME@|$HOME|g" "$DOTFILES_DIR/applications/ledger-live-desktop.desktop.i
     > "$APPS_DIR/ledger-live-desktop.desktop"
 
 for size in 128x128 256x256 512x512 1024x1024; do
-    mkdir -p "$ICONS_DIR/$size/apps"
-    install -m 644 "$DOTFILES_DIR/icons/hicolor/$size/apps/ledger-live-desktop.png" \
-                   "$ICONS_DIR/$size/apps/ledger-live-desktop.png"
+    link "$DOTFILES_DIR/icons/hicolor/$size/apps/ledger-live-desktop.png" \
+         "$ICONS_DIR/$size/apps/ledger-live-desktop.png"
 done
 
 if [ ! -x "$HOME/.local/bin/ledger" ]; then
@@ -61,8 +83,8 @@ update-desktop-database "$APPS_DIR" >/dev/null 2>&1 || true
 gtk-update-icon-cache -f -t "$ICONS_DIR" >/dev/null 2>&1 || true
 
 # --- User services ---
-ln -sfn "$DOTFILES_DIR/systemd/user/pipewire-startup-recover.service" \
-       "$HOME/.config/systemd/user/pipewire-startup-recover.service"
+link "$DOTFILES_DIR/systemd/user/pipewire-startup-recover.service" \
+     "$HOME/.config/systemd/user/pipewire-startup-recover.service"
 systemctl --user daemon-reload >/dev/null 2>&1 || \
     echo "WARNING: systemctl --user daemon-reload failed. Run it after login."
 systemctl --user enable pipewire-startup-recover.service >/dev/null 2>&1 || \
@@ -70,10 +92,9 @@ systemctl --user enable pipewire-startup-recover.service >/dev/null 2>&1 || \
 
 # --- Fonts (MesloLGS NF for Powerlevel10k) ---
 FONT_DIR="$HOME/.local/share/fonts"
-mkdir -p "$FONT_DIR"
 for font in "$DOTFILES_DIR"/fonts/*.ttf; do
     [ -e "$font" ] || continue
-    cp -n "$font" "$FONT_DIR/"
+    link "$font" "$FONT_DIR/$(basename "$font")"
 done
 fc-cache -f "$FONT_DIR" >/dev/null
 
@@ -112,8 +133,8 @@ ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
         "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 
 # Zsh configs
-ln -sfn "$DOTFILES_DIR/zsh/zshrc"    "$HOME/.zshrc"
-ln -sfn "$DOTFILES_DIR/zsh/p10k.zsh" "$HOME/.p10k.zsh"
+link "$DOTFILES_DIR/zsh/zshrc"    "$HOME/.zshrc"
+link "$DOTFILES_DIR/zsh/p10k.zsh" "$HOME/.p10k.zsh"
 
 # Default shell
 ZSH_BIN="$(command -v zsh || true)"
