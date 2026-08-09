@@ -116,6 +116,9 @@ alias reboot="systemctl reboot"
 alias virsh="virsh --connect qemu:///system"
 alias k="/usr/local/bin/kubectl"
 
+# Keep colors on remote hosts that don't know the local terminfo entry
+alias ssh="TERM=xterm-256color ssh"
+
 # User scripts
 SCRIPTS_BASE="$HOME/.local/bin"
 alias hdmi-on="bash $SCRIPTS_BASE/hdmi-output.sh"
@@ -124,7 +127,6 @@ alias telega-update="bash $SCRIPTS_BASE/telega-update.sh"
 alias py-venv="bash $SCRIPTS_BASE/py-venv.sh"
 alias hr-match="bash $HOME/Code/private/HR-Resume-Matcher/hr_match.sh"
 alias wifi="bash $SCRIPTS_BASE/connect-to-wifi.sh"
-alias vpn="bash $SCRIPTS_BASE/vpn.sh"
 alias ssh-me="bash $SCRIPTS_BASE/ssh-me.sh"
 alias ssh-port-forward="bash $SCRIPTS_BASE/ssh-port-forward.sh"
 alias ssh-proxy="bash $SCRIPTS_BASE/ssh-proxy.sh"
@@ -155,3 +157,8 @@ fi
 
 # ---------- Powerlevel10k user config ----------
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# ---------- Machine-local overrides ----------
+# ~/.zshrc.local is never committed: host names, internal IPs, per-machine
+# aliases and any other personal data belong there, not in this file.
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
