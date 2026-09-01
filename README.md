@@ -84,10 +84,11 @@ cd ~/Code/private/dotfiles
 
 ### Symlinks, not copies
 
-Every tracked file is symlinked into place, so the live config and the repo are always the same file — editing either one edits both, and `git status` shows every local change. Two deliberate exceptions:
+Every tracked file is symlinked into place, so the live config and the repo are always the same file — editing either one edits both, and `git status` shows every local change. Three deliberate exceptions:
 
 - `applications/*.desktop` is generated with `sed`, because `Exec=` needs an absolute path that cannot be hardcoded in the repo.
 - Files holding personal data are never tracked and never symlinked: `~/.config/dotfiles.env` and `~/.zshrc.local` are seeded once from a template and then left alone.
+- `scripts/dotfiles-version.sh` is copied, with `@DOTFILES_DIR@` expanded to the repo path. It has to survive `switch` onto a version older than itself, where a symlink would dangle and leave no way to run `back`. Because it is a copy, rerun `./install.sh` after editing it.
 
 If a real file already exists where a symlink should go, `install.sh` moves it to `<file>.bak-<timestamp>` instead of deleting it, then links. Rerunning the script is safe and idempotent.
 
