@@ -51,6 +51,9 @@ fi
 # --- Wallpapers ---
 link "$DOTFILES_DIR/wallpapers/win-xp-linux.png"      "$HOME/Pictures/wallpapers/win-xp-linux.png"
 link "$DOTFILES_DIR/wallpapers/win-xp-linux-blur.png" "$HOME/Pictures/wallpapers/win-xp-linux-blur.png"
+# The blur copy is pre-rendered to the panel size because i3lock cannot scale.
+link "$DOTFILES_DIR/wallpapers/1zvHQuC4.png"                "$HOME/Pictures/wallpapers/1zvHQuC4.png"
+link "$DOTFILES_DIR/wallpapers/1zvHQuC4-blur-1920x1200.png" "$HOME/Pictures/wallpapers/1zvHQuC4-blur-1920x1200.png"
 
 # --- Scripts ---
 SCRIPTS_DIR="$HOME/.local/bin"
