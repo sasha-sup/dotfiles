@@ -224,5 +224,6 @@ dotfiles/
 │   └── take-rice-screenshot.sh  # regenerates clean.png and busy.png
 ├── install.sh
 ├── CHANGELOG.md             # one section per tagged version
+├── AGENTS.md                # working notes for coding agents
 └── README.md
 ```
