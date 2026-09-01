@@ -5,21 +5,29 @@
 
 SCREENSHOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TERMINAL="kitty"
-MONITOR="HDMI-1"
+# Use the primary output, or the first connected one if none is marked primary
+MONITOR="${MONITOR:-$(xrandr --query | grep -m1 " connected primary" | cut -d' ' -f1)}"
+MONITOR="${MONITOR:-$(xrandr --query | grep -m1 " connected" | cut -d' ' -f1)}"
 
 # Get monitor geometry (WxH+X+Y)
-read -r W H X Y <<< "$(xrandr --query | grep "$MONITOR" | grep -oP '(\d+)x(\d+)\+(\d+)\+(\d+)' | sed 's/[x+]/ /g')"
+read -r W H X Y <<< "$(xrandr --query | grep "^$MONITOR " | grep -oP '(\d+)x(\d+)\+(\d+)\+(\d+)' | sed 's/[x+]/ /g')"
 
 echo "=== Rice Screenshot ==="
 echo "Monitor: $MONITOR (${W}x${H}+${X}+${Y})"
+
+# Capture the monitor area straight into a named file.
+# ImageMagick is used instead of flameshot so no desktop notification
+# pops up in the middle of the next shot.
+capture() {
+    import -window root -crop "${W}x${H}+${X}+${Y}" +repage "$1"
+}
 
 # 1. Clean screenshot — switch to empty workspace
 echo "[1/2] Clean desktop..."
 i3-msg "focus output $MONITOR"
 i3-msg "workspace 6"
 sleep 1
-flameshot full --region "${W}x${H}+${X}+${Y}" -p "$SCREENSHOT_DIR/"
-mv "$SCREENSHOT_DIR"/*.png "$SCREENSHOT_DIR/clean.png" 2>/dev/null
+capture "$SCREENSHOT_DIR/clean.png"
 echo "  -> clean.png saved"
 
 # 2. Busy screenshot — open tiled terminals
@@ -47,10 +55,7 @@ $TERMINAL --title "cmatrix" -e bash -c "cmatrix -s -C cyan" &
 sleep 2
 
 # Take screenshot
-flameshot full --region "${W}x${H}+${X}+${Y}" -p "$SCREENSHOT_DIR/"
-# Rename latest screenshot
-LATEST=$(ls -t "$SCREENSHOT_DIR"/*.png 2>/dev/null | grep -v -E "clean|busy|take" | head -1)
-[ -n "$LATEST" ] && mv "$LATEST" "$SCREENSHOT_DIR/busy.png"
+capture "$SCREENSHOT_DIR/busy.png"
 echo "  -> busy.png saved"
 
 # Cleanup — close opened windows
