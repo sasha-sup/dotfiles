@@ -7,9 +7,22 @@ set -e
 # another tag rewrites the live config in place. Nothing needs reinstalling;
 # only the running programs have to reread their files, which `reload` does.
 
-# $0 is the symlink in ~/.local/bin, so resolve it before asking for the repo.
-SCRIPT_PATH="$(readlink -f "$0")"
-DOTFILES_DIR="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
+# Find the repo. install.sh expands @DOTFILES_DIR@ in the installed copy,
+# because that copy lives in ~/.local/bin and cannot infer the path from its own
+# location. Running the file straight out of the repo leaves the placeholder
+# unexpanded, and then the script's own directory is the answer.
+INSTALLED_DIR="@DOTFILES_DIR@"
+if [ -z "$DOTFILES_DIR" ]; then
+    if [ -d "$INSTALLED_DIR/.git" ]; then
+        DOTFILES_DIR="$INSTALLED_DIR"
+    else
+        DOTFILES_DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+    fi
+fi
+if [ ! -d "$DOTFILES_DIR/.git" ]; then
+    echo "No dotfiles repo at $DOTFILES_DIR. Set DOTFILES_DIR or rerun install.sh." >&2
+    exit 1
+fi
 CHANGELOG="$DOTFILES_DIR/CHANGELOG.md"
 
 git() { command git -C "$DOTFILES_DIR" "$@"; }

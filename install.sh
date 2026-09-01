@@ -58,6 +58,16 @@ link "$DOTFILES_DIR/wallpapers/1zvHQuC4-blur-1920x1200.png" "$HOME/Pictures/wall
 # --- Scripts ---
 SCRIPTS_DIR="$HOME/.local/bin"
 for script in "$DOTFILES_DIR"/scripts/*.sh; do
+    # dotfiles-version.sh is generated, not symlinked. It has to keep working
+    # while HEAD sits on a version older than itself — a symlink would dangle in
+    # that checkout and leave no way to run 'back'. The copy also has to be told
+    # where the repo is, since it can no longer derive that from its own path.
+    if [ "$(basename "$script")" = "dotfiles-version.sh" ]; then
+        mkdir -p "$SCRIPTS_DIR"
+        sed "s|@DOTFILES_DIR@|$DOTFILES_DIR|g" "$script" > "$SCRIPTS_DIR/dotfiles-version.sh"
+        chmod +x "$SCRIPTS_DIR/dotfiles-version.sh"
+        continue
+    fi
     link "$script" "$SCRIPTS_DIR/$(basename "$script")"
 done
 
