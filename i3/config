@@ -76,10 +76,13 @@ tiling_drag modifier titlebar
 default_border pixel 2
 default_floating_border pixel 2
 
-# Отступы между окнами
-gaps inner 8
-gaps outer 4
-gaps top 30
+# Отступы между окнами.
+# В i3 зазор у края экрана = outer + inner, поэтому outer 0 даёт ровно 10 px
+# слева, справа и снизу — столько же, сколько между самими окнами.
+# gaps top = offset-y полибара (10) + его высота (29) + 10 = 49, минус inner 10.
+gaps inner 10
+gaps outer 0
+gaps top 39
 smart_borders on
 # smart_gaps on
 
