@@ -15,7 +15,7 @@ i3wm rice on Debian Trixie (ThinkPad T14)
 - **Shell:** Zsh + Oh My Zsh + Powerlevel10k + fzf
 - **Font:** JetBrainsMono Nerd Font
 - **Emoji:** Noto Color Emoji via fontconfig fallback
-- **Wallpaper:** Custom Win XP / Linux mashup
+- **Wallpaper:** Neon shopfront shot (`wallpapers/1zvHQuC4.png`)
 
 ## Polybar Modules
 
@@ -60,6 +60,7 @@ Distributed into `~/.local/bin/` by `install.sh`. Referenced from i3 and zshrc b
 | `push-my-dir.sh` | Auto-commit + push a list of repos (from env) |
 | `ssd-healthchecker.sh` | NVMe SMART watchdog with Telegram alerts |
 | `pipewire-startup-recover.sh` | Restarts PipeWire after login only if startup left audio on `Dummy Output` |
+| `dotfiles-version.sh` | Switch the rice between tagged versions and reload the desktop (see [Versions](#versions)) |
 
 Plus `polybar/wifi-menu.sh` — rofi-based wifi picker launched from the polybar Network module.
 
@@ -91,6 +92,32 @@ Every tracked file is symlinked into place, so the live config and the repo are 
 If a real file already exists where a symlink should go, `install.sh` moves it to `<file>.bak-<timestamp>` instead of deleting it, then links. Rerunning the script is safe and idempotent.
 
 The PipeWire startup recovery user service is enabled by `install.sh`; if user systemd is unavailable during install, rerun `systemctl --user enable pipewire-startup-recover.service` after login.
+
+## Versions
+
+Each look is a git tag, described in [CHANGELOG.md](CHANGELOG.md). Because every tracked file is
+symlinked, checking out a tag rewrites the live config in place — nothing is reinstalled, only the
+running programs are reloaded. `dotfiles-version.sh` does both:
+
+```bash
+dotfiles-version.sh list                 # every version, * marks the checked-out one
+dotfiles-version.sh switch v1.0.0        # roll the whole rice back and reload the desktop
+dotfiles-version.sh back                 # return to master
+dotfiles-version.sh release v2.1.0 "..." # write the changelog section and tag this commit
+```
+
+`switch` leaves the repo in detached HEAD, so it refuses to run while anything is uncommitted —
+commit or `git stash` first, and use `back` when you are done looking.
+
+`release` collects the commit subjects since the previous tag into a new `CHANGELOG.md` section,
+commits it, and creates the annotated tag. Push it afterwards:
+
+```bash
+git push origin master && git push origin v2.1.0
+```
+
+Numbering: bump the major for a new look (different wallpaper, palette or bar layout), the minor for
+added config or scripts, the patch for fixes.
 
 ## Personal values (`~/.config/dotfiles.env`)
 
@@ -192,6 +219,9 @@ dotfiles/
 ├── icons/hicolor/           # app icons, symlinked into ~/.local/share/icons/hicolor/
 ├── fonts/                   # Powerlevel10k MesloLGS, symlinked into ~/.local/share/fonts/
 ├── wallpapers/
+├── screenshots/
+│   └── take-rice-screenshot.sh  # regenerates clean.png and busy.png
 ├── install.sh
+├── CHANGELOG.md             # one section per tagged version
 └── README.md
 ```
