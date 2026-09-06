@@ -3,6 +3,15 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v2.1.0 — 2026-09-06
+
+_external monitor is the only output_
+
+- docs(agents): add working notes for coding agents
+- feat(i3): switch keyboard layout with left Win key
+- fix(display): make the external monitor the only active output
+- fix(display): stop re-applying a layout that is already correct
+
 ## v2.0.0 — 2026-09-01
 
 _Neon purple rice: new wallpaper, translucent bar, uniform gaps_
