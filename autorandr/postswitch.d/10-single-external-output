@@ -1,0 +1,8 @@
+#!/bin/sh
+# autorandr picks a profile by EDID fingerprint. An unknown external monitor
+# matches nothing, so autorandr-lid-listener.service falls back to its default
+# profile ("mobile": external off, laptop panel on) — the opposite of what this
+# machine wants with the lid closed. Re-assert the rule after every switch:
+# hdmi-output.sh is the single source of truth for which output is enabled.
+# It only calls xrandr, never autorandr, so this cannot loop.
+exec "$HOME/.local/bin/hdmi-output.sh"

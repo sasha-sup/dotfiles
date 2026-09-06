@@ -30,6 +30,10 @@ link "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
 link "$DOTFILES_DIR/rofi/config.rasi"     "$HOME/.config/rofi/config.rasi"
 link "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
      "$HOME/.config/fontconfig/conf.d/01-prefer-color-emoji.conf"
+# Saved autorandr profiles are EDID-specific and stay machine-local, but the
+# hook that re-asserts the single-external-output rule is shared.
+link "$DOTFILES_DIR/autorandr/postswitch.d/10-single-external-output" \
+     "$HOME/.config/autorandr/postswitch.d/10-single-external-output"
 
 # --- Private data ---
 # dotfiles.env holds hosts, UUIDs and recipients, so it is never committed and
