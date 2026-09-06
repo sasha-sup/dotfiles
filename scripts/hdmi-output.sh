@@ -24,6 +24,19 @@ fi
 external=$(printf '%s\n' "$query" | awk -v panel="$panel" '$2 == "connected" && $1 != panel { print $1; exit }')
 target="${external:-$panel}"
 
+# Bail out when the layout already matches. Applying the same mode again blanks
+# and flashes the screen, and the workspace sweep below visibly cycles through
+# every workspace. Both are noticeable at login, where this script runs twice:
+# once from i3 exec_always, then again from the autorandr postswitch hook that
+# 40-monitor-hotplug.rules triggers on the DRM change the first run caused.
+enabled=$(printf '%s\n' "$query" |
+    awk '/^[^ ]+ (connected|disconnected)/ && /[0-9]+x[0-9]+\+[0-9]+\+[0-9]+/ { print $1 }')
+primary=$(printf '%s\n' "$query" | awk '$2 == "connected" && $3 == "primary" { print $1 }')
+if [ "$enabled" = "$target" ] && [ "$primary" = "$target" ]; then
+    echo "${target} is already the only active output; nothing to do"
+    exit 0
+fi
+
 # A single xrandr call enables the target and switches every other output off,
 # including disconnected ones that xrandr still keeps active with a stale mode.
 # Leaving those on makes i3 keep workspaces bound to invisible outputs.
