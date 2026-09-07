@@ -37,6 +37,17 @@ one-liner). A curve that looks reasonable can still oscillate: an earlier one pu
 at 55 C, which is exactly where this machine idles with its VMs up, and the fan toggled every few
 seconds.
 
+Two failure modes there are silent, so check for them explicitly:
+
+- `tpacpi` sensor indices are 0-based; `hwmon` indices are 1-based. A wrong `tpacpi` index reads
+  `-128`, which sits under every limit, so the sensor is dead and votes on nothing. The config still
+  parses and the daemon still runs.
+- A sensor can parse, read a real number, and still never matter, because another sensor is always
+  hotter. That is fine for a deliberate backstop and a bug anywhere else.
+
+Both show up in the daemon's own output. Stop the service, run `thinkfan -c /etc/thinkfan.yaml -n`,
+and read the `Temperatures(bias):` line: one number per sensor, in config order, all plausible.
+
 ## Do not run install.sh to test a small change
 
 It is idempotent, but it also runs `sudo apt install`, `chsh`, writes into `/etc`, clones Oh My Zsh

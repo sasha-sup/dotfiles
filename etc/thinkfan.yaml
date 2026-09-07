@@ -14,8 +14,19 @@
 # The last level is "level disengaged" (fan unrestricted), so a runaway
 # temperature always ends in maximum airflow, never in a held level.
 #
-# Verified with `stress --cpu 12`: peak 85 C on the turbo burst with the fan
-# already at maximum, then a steady 62-64 C at level 2-3 for the rest of the run.
+# Measured against the stock EC curve, same `stress --cpu 12` run both times:
+#
+#              turbo peak   sustained   idle fan    load fan
+#   EC auto        88 C      62-68 C    3482 RPM    3482 RPM
+#   this curve     90 C      64-68 C       0 RPM   ~2665 RPM
+#
+# The 2 C worse peak is the price of a stopped fan and is not tunable. thinkfan
+# already jumps straight to "disengaged" on the first poll that sees the rise;
+# the limit is mechanical, a fan at 0 RPM needs seconds to move useful air while
+# the CPU reaches 90 C in under ten. Raising -b (rising-temperature bias) to 10
+# was tried and changed the peak not at all, only making the post-burst tail
+# louder, so the daemon runs at the default bias. 90 C is a few seconds of turbo
+# against a 100 C Tjmax, and sustained load is where this curve is quieter.
 
 sensors:
   # Package id 0 - the number Intel throttles on. Tjmax is 100 C.
@@ -29,10 +40,27 @@ sensors:
     name: nvme
     indices: [1]
 
+  # EC watches five live sensors; the two above are only two of them. This is
+  # the hottest of the rest - it sat at 49 C idle and 57 C under a full 12-core
+  # load, so it tracks the CPU rather than leading it. Its limits are set well
+  # above that band on purpose: it is a backstop for the one case the other two
+  # sensors cannot see, something in the chassis heating while the CPU stays
+  # cool. It should never be the sensor that drives the fan.
+  #
+  # tpacpi indices are 0-based, unlike the 1-based hwmon indices above. In
+  # `cat /proc/acpi/ibm/thermal` this is the 7th number. Getting that wrong is
+  # silent: a bad index reads -128, which sits below every limit, so the sensor
+  # is simply dead and never votes. Check a config change against the daemon's
+  # own output rather than assuming - stop the service and run
+  # `thinkfan -c /etc/thinkfan.yaml -n`, then read the "Temperatures(bias):"
+  # line it logs. Every sensor there has to show a plausible number.
+  - tpacpi: /proc/acpi/ibm/thermal
+    indices: [6]
+
 fans:
   - tpacpi: /proc/acpi/ibm/fan
 
-# Limits are [coretemp, nvme], in the sensor order above. Every level overlaps
+# Limits are [coretemp, nvme, tpacpi], in the sensor order above. Every level overlaps
 # the one below it by 5-6 C; that gap is the hysteresis that keeps the fan from
 # oscillating around a threshold.
 #
@@ -41,31 +69,31 @@ fans:
 # threshold and the fan toggled on and off every few seconds.
 levels:
   - speed: 0
-    upper_limit: [60, 62]
+    upper_limit: [60, 62, 64]
 
   - speed: 1
-    lower_limit: [54, 56]
-    upper_limit: [66, 67]
+    lower_limit: [54, 56, 58]
+    upper_limit: [66, 67, 69]
 
   - speed: 2
-    lower_limit: [60, 61]
-    upper_limit: [71, 70]
+    lower_limit: [60, 61, 63]
+    upper_limit: [71, 70, 73]
 
   - speed: 3
-    lower_limit: [65, 65]
-    upper_limit: [76, 73]
+    lower_limit: [65, 65, 67]
+    upper_limit: [76, 73, 77]
 
   - speed: 4
-    lower_limit: [70, 68]
-    upper_limit: [81, 76]
+    lower_limit: [70, 68, 71]
+    upper_limit: [81, 76, 80]
 
   - speed: 5
-    lower_limit: [75, 71]
-    upper_limit: [85, 78]
+    lower_limit: [75, 71, 74]
+    upper_limit: [85, 78, 83]
 
   - speed: 7
-    lower_limit: [80, 74]
-    upper_limit: [91, 81]
+    lower_limit: [80, 74, 77]
+    upper_limit: [91, 81, 87]
 
   - speed: "level disengaged"
-    lower_limit: [86, 77]
+    lower_limit: [86, 77, 81]

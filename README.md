@@ -99,7 +99,18 @@ The PipeWire startup recovery user service is enabled by `install.sh`; if user s
 
 On a ThinkPad T14 Gen 4 — and only there, the check is on `product_version` — `install.sh` also installs thinkfan and takes the fan away from the embedded controller. The stock EC curve latches: once a load raises the fan it never lowers it again, so the machine idles at ~3500 RPM and 45 C long after the load is gone. Cycling the platform profile (`powerprofilesctl set power-saver`, wait, set it back) is what forces the EC to re-evaluate, and that is the workaround if thinkfan is not running.
 
-The curve in `etc/thinkfan.yaml` reads the CPU package and the NVMe composite, keeps the fan fully stopped below 60 C, and ends in `level disengaged` so a runaway temperature always gets maximum airflow. Level 0 reaches as high as 60 C on purpose: idle with both work VMs up sits at 50-53 C, and a tighter ceiling put that band right on the threshold and made the fan toggle every few seconds.
+The curve in `etc/thinkfan.yaml` reads the CPU package, the NVMe composite and one chassis sensor, keeps the fan fully stopped below 60 C, and ends in `level disengaged` so a runaway temperature always gets maximum airflow. Level 0 reaches as high as 60 C on purpose: idle with both work VMs up sits at 50-53 C, and a tighter ceiling put that band right on the threshold and made the fan toggle every few seconds.
+
+Measured against the stock curve, the same `stress --cpu 12` run both times:
+
+|            | turbo peak | sustained | idle fan | load fan   |
+|------------|------------|-----------|----------|------------|
+| EC auto    | 88 C       | 62-68 C   | 3482 RPM | 3482 RPM   |
+| this curve | 90 C       | 64-68 C   | 0 RPM    | ~2665 RPM  |
+
+The EC never varied its fan at all — flat 3482 RPM before, during and after the load. The 2 C worse burst peak is the price of a stopped fan and is not tunable: thinkfan goes straight to `disengaged` on the first poll that sees the rise, but a fan at 0 RPM needs seconds to move air while the CPU reaches 90 C in under ten.
+
+Note that `tpacpi` sensor indices are 0-based while `hwmon` indices are 1-based. A wrong `tpacpi` index fails silently — it reads `-128`, which is below every limit, so the sensor never votes and nothing complains. After editing sensors, stop the service and run `thinkfan -c /etc/thinkfan.yaml -n`, then check that every number on its `Temperatures(bias):` line is plausible.
 
 If thinkfan dies, the `thinkpad_acpi` watchdog hands the fan back to the EC — measured at about 125 s, which is thinkfan's hardcoded 120 s timeout plus a poll. That timeout is not configurable. Underneath it sit the CPU's own protections, which do not involve the fan at all: TM1 throttling and thermal shutdown at Tjmax 100 C.
 
