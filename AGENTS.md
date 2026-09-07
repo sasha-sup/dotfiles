@@ -47,6 +47,12 @@ Three failure modes there are silent, so check for them explicitly:
 - `-b-5` in `etc/default/thinkfan` is part of the curve, not a tuning detail. The package sensor
   spikes +9 to +11 C in a single second and the default positive bias turns that into fan commands.
   Change thresholds and bias in separate passes, or you cannot tell which one did what.
+- The daemon working right now says nothing about whether it works at boot. `thinkpad_acpi` is
+  autoloaded by udev at ~4.3 s and `thinkfan.service` starts at ~1.9 s, so before
+  `etc/modules-load.d/thinkfan.conf` existed every cold boot failed with
+  `ERROR: /proc/acpi/ibm/thermal: No such file or directory` and left the fan on the EC curve. A
+  hand-started service hides this completely. Check `journalctl -b -u thinkfan.service` after a real
+  reboot, not `systemctl is-active` after a manual start.
 
 The first two show up in the daemon's own output. Stop the service, run
 `thinkfan -c /etc/thinkfan.yaml -n`, and read the `Temperatures(bias):` line: one number per sensor,

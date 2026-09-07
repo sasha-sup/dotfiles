@@ -145,9 +145,12 @@ if [ "$(cat /sys/class/dmi/id/product_version 2>/dev/null)" = "ThinkPad T14 Gen 
 
     if [ -x /usr/sbin/thinkfan ]; then
         SYSTEM_FILES_CHANGED=0
-        system_file "$DOTFILES_DIR/etc/thinkfan.yaml"            /etc/thinkfan.yaml
-        system_file "$DOTFILES_DIR/etc/default/thinkfan"         /etc/default/thinkfan
-        system_file "$DOTFILES_DIR/etc/modprobe.d/thinkfan.conf" /etc/modprobe.d/thinkfan.conf
+        system_file "$DOTFILES_DIR/etc/thinkfan.yaml"                 /etc/thinkfan.yaml
+        system_file "$DOTFILES_DIR/etc/default/thinkfan"              /etc/default/thinkfan
+        system_file "$DOTFILES_DIR/etc/modprobe.d/thinkfan.conf"      /etc/modprobe.d/thinkfan.conf
+        system_file "$DOTFILES_DIR/etc/modules-load.d/thinkfan.conf"  /etc/modules-load.d/thinkfan.conf
+        system_file "$DOTFILES_DIR/etc/systemd/system/thinkfan.service.d/10-restart.conf" \
+                    /etc/systemd/system/thinkfan.service.d/10-restart.conf
 
         # thinkpad_acpi refuses to hand the fan to userspace unless it was
         # loaded with fan_control=1, and it reads that only at load time. The
@@ -157,6 +160,9 @@ if [ "$(cat /sys/class/dmi/id/product_version 2>/dev/null)" = "ThinkPad T14 Gen 
                 echo "WARNING: could not reload thinkpad_acpi. Fan control starts after the next reboot."
         fi
 
+        if [ "$SYSTEM_FILES_CHANGED" = 1 ]; then
+            sudo systemctl daemon-reload
+        fi
         sudo systemctl enable thinkfan.service >/dev/null 2>&1 || \
             echo "WARNING: could not enable thinkfan.service."
         if [ "$SYSTEM_FILES_CHANGED" = 1 ] || ! systemctl is-active --quiet thinkfan.service; then

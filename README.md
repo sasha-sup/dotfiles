@@ -113,7 +113,9 @@ The EC wins on every temperature, and buys that with 3460 RPM around the clock �
 
 The middle row is a revision that let the fan stop entirely. It is in the table because it is the reason the floor is level 1 and not level 0: with no air moving the heatsink stays saturated, so idle settles ~10 C higher and every burst starts from that hotter baseline. Silence at idle costs 8 C of burst headroom, not the 2 C an early measurement suggested.
 
-Two things about this setup are easy to get wrong and both fail quietly:
+`etc/modules-load.d/thinkfan.conf` is not decoration. Nothing was loading `thinkpad_acpi` deterministically — udev autoloads it from ACPI enumeration at about 4.3 s, while `thinkfan.service` starts after `basic.target` at about 1.9 s. On a cold boot the daemon died with `ERROR: /proc/acpi/ibm/thermal: No such file or directory` and the fan quietly stayed on the EC curve for the whole session. Listing the module makes `systemd-modules-load.service` load it in early sysinit, which gives the unit's existing `After=systemd-modules-load.service` something real to order against. The drop-in in `etc/systemd/system/thinkfan.service.d/` adds `Restart=on-failure`, which the packaged unit does not set; a killed daemon now comes back in about 9 s instead of leaving the fan on the EC curve until someone notices.
+
+Three things about this setup are easy to get wrong and all of them fail quietly:
 
 - **`-b-5` in `etc/default/thinkfan` is load-bearing.** The package sensor spikes +9 to +11 C in a single second on background turbo, and thinkfan's default positive bias amplifies those into fan commands — 16 level changes in five idle minutes, including jumps to level 5 and 7 while the CPU was really at 58-62 C. With the negative bias, zero. Do not drop it while tuning thresholds. Note the attached syntax, `-b-5`: `getopt` rejects the spaced form.
 - **`tpacpi` sensor indices are 0-based, `hwmon` indices are 1-based.** A wrong `tpacpi` index reads `-128`, which is below every limit, so the sensor never votes and nothing complains.
@@ -257,8 +259,10 @@ dotfiles/
 ├── fonts/                   # Powerlevel10k MesloLGS, symlinked into ~/.local/share/fonts/
 ├── etc/                     # copied into /etc with sudo, T14 Gen 4 only
 │   ├── thinkfan.yaml        # fan curve
-│   ├── default/thinkfan
-│   └── modprobe.d/thinkfan.conf
+│   ├── default/thinkfan     # -s and -b; the bias is part of the curve
+│   ├── modprobe.d/          # fan_control=1
+│   ├── modules-load.d/      # load thinkpad_acpi before thinkfan starts
+│   └── systemd/system/thinkfan.service.d/   # Restart=on-failure
 ├── wallpapers/
 ├── screenshots/
 │   └── take-rice-screenshot.sh  # regenerates clean.png and busy.png
