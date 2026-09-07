@@ -29,11 +29,18 @@ if ! printf '%s\n' "$query" | grep -q "^${panel} "; then
     exit 1
 fi
 
-# The external monitor is the only screen we want: the lid stays closed, so the
-# laptop panel is switched off whenever anything else is plugged in. Falling
-# back to the panel keeps the machine usable when nothing is connected.
+# The external monitor is the main screen: it becomes primary at 0x0 and the
+# laptop panel is stacked directly below it. Falling back to the panel alone
+# keeps the machine usable when nothing is connected.
 external=$(printf '%s\n' "$query" | awk -v panel="$panel" '$2 == "connected" && $1 != panel { print $1; exit }')
 target="${external:-$panel}"
+
+# Geometry of one output as xrandr reports it ("1920x1080+0+2160"), empty when
+# the output is off. The mode sits at field 3 or 4 depending on "primary".
+geometry() {
+    printf '%s\n' "$query" |
+        awk -v out="$1" '$1 == out { for (i = 3; i <= NF; i++) if ($i ~ /^[0-9]+x[0-9]+\+[0-9]+\+[0-9]+$/) { print $i; exit } }'
+}
 
 # Bail out when the layout already matches. Applying the same mode again blanks
 # and flashes the screen, and the workspace sweep below visibly cycles through
@@ -41,29 +48,52 @@ target="${external:-$panel}"
 # once from i3 exec_always, then again from the autorandr postswitch hook that
 # 40-monitor-hotplug.rules triggers on the DRM change the first run caused.
 enabled=$(printf '%s\n' "$query" |
-    awk '/^[^ ]+ (connected|disconnected)/ && /[0-9]+x[0-9]+\+[0-9]+\+[0-9]+/ { print $1 }')
+    awk '/^[^ ]+ (connected|disconnected)/ && /[0-9]+x[0-9]+\+[0-9]+\+[0-9]+/ { print $1 }' | sort)
 primary=$(printf '%s\n' "$query" | awk '$2 == "connected" && $3 == "primary" { print $1 }')
-if [ "$enabled" = "$target" ] && [ "$primary" = "$target" ]; then
-    echo "${target} is already the only active output; nothing to do"
-    # Waking from the lock screen leaves the layout untouched but can still have
-    # taken the bar down with it, so revive it without restarting a live one.
+
+if [ -n "$external" ]; then
+    want_enabled=$(printf '%s\n%s\n' "$external" "$panel" | sort)
+    external_geometry=$(geometry "$external")
+    panel_geometry=$(geometry "$panel")
+    external_height=${external_geometry#*x}
+    external_height=${external_height%%+*}
+    if [ "$enabled" = "$want_enabled" ] && [ "$primary" = "$external" ] &&
+        [ "${external_geometry#*+}" = "0+0" ] &&
+        [ "${panel_geometry#*+}" = "0+${external_height}" ]; then
+        echo "${external} is already primary with ${panel} below it; nothing to do"
+        # Waking from the lock screen leaves the layout untouched but can still
+        # have taken the bar down with it, so revive it without restarting a
+        # live one.
+        pgrep -u "$UID" -x polybar >/dev/null || launch_bar
+        exit 0
+    fi
+elif [ "$enabled" = "$panel" ] && [ "$primary" = "$panel" ]; then
+    echo "${panel} is already the only active output; nothing to do"
     pgrep -u "$UID" -x polybar >/dev/null || launch_bar
     exit 0
 fi
 
-# A single xrandr call enables the target and switches every other output off,
-# including disconnected ones that xrandr still keeps active with a stale mode.
-# Leaving those on makes i3 keep workspaces bound to invisible outputs.
-args=(--output "$target" --auto --primary)
+# A single xrandr call places the outputs we keep and switches every other one
+# off, including disconnected ones that xrandr still keeps active with a stale
+# mode. Leaving those on makes i3 keep workspaces bound to invisible outputs.
+args=(--output "$target" --auto --primary --pos 0x0)
+if [ -n "$external" ]; then
+    # --below anchors the panel to the external monitor's left edge, one full
+    # external height down, so the desktop is a single vertical stack.
+    args+=(--output "$panel" --auto --below "$external")
+fi
 while read -r name; do
     [ "$name" = "$target" ] && continue
+    if [ -n "$external" ] && [ "$name" = "$panel" ]; then
+        continue
+    fi
     args+=(--output "$name" --off)
 done < <(printf '%s\n' "$query" | awk '/^[^ ]+ (connected|disconnected)/ { print $1 }')
 
 xrandr "${args[@]}"
 
 if [ -n "$external" ]; then
-    echo "External monitor ${external} is the only active output"
+    echo "External monitor ${external} is primary; ${panel} sits below it"
 else
     echo "External monitor not found; only ${panel} is enabled"
 fi
