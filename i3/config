@@ -40,7 +40,9 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock -u -i /home/sasha/
 # exec_always feh --bg-scale /usr/share/images/desktop-base/default
 # the picture is 16:9 and the panel is 16:10, so fill-crop instead of stretch
 exec_always feh --bg-fill /home/sasha/Pictures/wallpapers/1zvHQuC4.png
-exec_always --no-startup-id "setxkbmap -layout us,ru -option grp:lwin_toggle"
+# The empty -option clears whatever Xorg set at device add, otherwise setxkbmap
+# merges the two and Win+Space keeps toggling as well.
+exec_always --no-startup-id "setxkbmap -layout us,ru -option -option grp:lwin_toggle"
 exec_always /bin/bash $HOME/.local/bin/fan-speed.sh
 exec_always /bin/bash $HOME/.local/bin/bat-lifetime.sh
 exec_always /bin/bash $HOME/.local/bin/bat-low-alert.sh
