@@ -1,0 +1,5 @@
+# Config path is explicit so a stray /etc/thinkfan.conf cannot shadow the YAML.
+# -s 2: poll every 2 s instead of 5. The curve keeps the fan off below 55 C, so
+# a spike has to be caught quickly rather than up to five seconds later.
+THINKFAN_ARGS="-c /etc/thinkfan.yaml -s 2"
+DAEMON_ARGS="-q"

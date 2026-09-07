@@ -20,6 +20,28 @@ link() {
     ln -sfn "$src" "$dest"
 }
 
+# system_file SRC DEST — install a repo file into a root-owned location.
+# Copied rather than symlinked, unlike everything under $HOME: /etc must not
+# depend on this repo staying checked out at this path, and root should not
+# follow a link into a tree the user can rewrite. Only touches DEST when the
+# content actually differs, so rerunning the script is quiet and asks for sudo
+# no more than it has to. Sets SYSTEM_FILES_CHANGED so callers can decide
+# whether a service needs restarting.
+system_file() {
+    local src="$1" dest="$2"
+    if sudo cmp -s "$src" "$dest" 2>/dev/null; then
+        return 0
+    fi
+    sudo mkdir -p "$(dirname "$dest")"
+    if sudo test -e "$dest"; then
+        sudo cp -a "$dest" "$dest.$BACKUP_SUFFIX"
+        echo "  backed up existing $dest -> $dest.$BACKUP_SUFFIX"
+    fi
+    sudo install -m 0644 -o root -g root "$src" "$dest"
+    echo "  installed $dest"
+    SYSTEM_FILES_CHANGED=1
+}
+
 # --- Configs ---
 link "$DOTFILES_DIR/i3/config"            "$HOME/.config/i3/config"
 link "$DOTFILES_DIR/polybar/config.ini"   "$HOME/.config/polybar/config.ini"
@@ -106,6 +128,43 @@ systemctl --user daemon-reload >/dev/null 2>&1 || \
     echo "WARNING: systemctl --user daemon-reload failed. Run it after login."
 systemctl --user enable pipewire-startup-recover.service >/dev/null 2>&1 || \
     echo "WARNING: pipewire-startup-recover.service was not enabled. Run: systemctl --user enable pipewire-startup-recover.service"
+
+# --- Fan control (ThinkPad T14 Gen 4 only) ---
+# The stock EC fan curve latches: once a load raises the fan it never walks it
+# back down, so the machine sits at ~3500 RPM and 45 C long after the load is
+# gone. thinkfan takes the fan instead and stops it entirely through the idle
+# range. The curve in etc/thinkfan.yaml is written against this model's sensor
+# names and its 50-53 C idle, so it is gated on the exact machine rather than
+# applied to whatever hardware happens to run this script.
+if [ "$(cat /sys/class/dmi/id/product_version 2>/dev/null)" = "ThinkPad T14 Gen 4" ]; then
+    if [ ! -x /usr/sbin/thinkfan ]; then
+        echo "Installing thinkfan..."
+        sudo apt install -y thinkfan || \
+            echo "WARNING: thinkfan install failed. Run manually: sudo apt install thinkfan"
+    fi
+
+    if [ -x /usr/sbin/thinkfan ]; then
+        SYSTEM_FILES_CHANGED=0
+        system_file "$DOTFILES_DIR/etc/thinkfan.yaml"            /etc/thinkfan.yaml
+        system_file "$DOTFILES_DIR/etc/default/thinkfan"         /etc/default/thinkfan
+        system_file "$DOTFILES_DIR/etc/modprobe.d/thinkfan.conf" /etc/modprobe.d/thinkfan.conf
+
+        # thinkpad_acpi refuses to hand the fan to userspace unless it was
+        # loaded with fan_control=1, and it reads that only at load time. The
+        # reload fails if something holds the module; a reboot covers that.
+        if [ "$(cat /sys/module/thinkpad_acpi/parameters/fan_control 2>/dev/null)" != "Y" ]; then
+            sudo modprobe -r thinkpad_acpi && sudo modprobe thinkpad_acpi || \
+                echo "WARNING: could not reload thinkpad_acpi. Fan control starts after the next reboot."
+        fi
+
+        sudo systemctl enable thinkfan.service >/dev/null 2>&1 || \
+            echo "WARNING: could not enable thinkfan.service."
+        if [ "$SYSTEM_FILES_CHANGED" = 1 ] || ! systemctl is-active --quiet thinkfan.service; then
+            sudo systemctl restart thinkfan.service || \
+                echo "WARNING: thinkfan.service did not start. Check with: systemctl status thinkfan"
+        fi
+    fi
+fi
 
 # --- Fonts (MesloLGS NF for Powerlevel10k) ---
 FONT_DIR="$HOME/.local/share/fonts"

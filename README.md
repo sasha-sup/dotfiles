@@ -80,19 +80,36 @@ cd ~/Code/private/dotfiles
 ./install.sh
 ```
 
-`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fontconfig emoji fallback into `~/.config/fontconfig/conf.d/`, fonts into `~/.local/share/fonts/`, desktop entries into `~/.local/share/applications/` with icons into `~/.local/share/icons/hicolor/`, and sets up Oh My Zsh + Powerlevel10k.
+`install.sh` symlinks configs into `~/.config/...`, scripts into `~/.local/bin/`, user services into `~/.config/systemd/user/`, fontconfig emoji fallback into `~/.config/fontconfig/conf.d/`, fonts into `~/.local/share/fonts/`, desktop entries into `~/.local/share/applications/` with icons into `~/.local/share/icons/hicolor/`, and sets up Oh My Zsh + Powerlevel10k. On a T14 Gen 4 it also copies `etc/` into `/etc` with `sudo` to set up fan control — see below.
 
 ### Symlinks, not copies
 
-Every tracked file is symlinked into place, so the live config and the repo are always the same file — editing either one edits both, and `git status` shows every local change. Three deliberate exceptions:
+Every tracked file is symlinked into place, so the live config and the repo are always the same file — editing either one edits both, and `git status` shows every local change. Four deliberate exceptions:
 
 - `applications/*.desktop` is generated with `sed`, because `Exec=` needs an absolute path that cannot be hardcoded in the repo.
 - Files holding personal data are never tracked and never symlinked: `~/.config/dotfiles.env` and `~/.zshrc.local` are seeded once from a template and then left alone.
 - `scripts/dotfiles-version.sh` is copied, with `@DOTFILES_DIR@` expanded to the repo path. It has to survive `switch` onto a version older than itself, where a symlink would dangle and leave no way to run `back`. Because it is a copy, rerun `./install.sh` after editing it.
+- `etc/` is copied into `/etc` with `sudo`, because root should not follow a symlink into a tree the user can rewrite, and `/etc` must keep working if this repo is moved or unmounted. These are copies too, so rerun `./install.sh` after editing them.
 
 If a real file already exists where a symlink should go, `install.sh` moves it to `<file>.bak-<timestamp>` instead of deleting it, then links. Rerunning the script is safe and idempotent.
 
 The PipeWire startup recovery user service is enabled by `install.sh`; if user systemd is unavailable during install, rerun `systemctl --user enable pipewire-startup-recover.service` after login.
+
+### Fan control
+
+On a ThinkPad T14 Gen 4 — and only there, the check is on `product_version` — `install.sh` also installs thinkfan and takes the fan away from the embedded controller. The stock EC curve latches: once a load raises the fan it never lowers it again, so the machine idles at ~3500 RPM and 45 C long after the load is gone. Cycling the platform profile (`powerprofilesctl set power-saver`, wait, set it back) is what forces the EC to re-evaluate, and that is the workaround if thinkfan is not running.
+
+The curve in `etc/thinkfan.yaml` reads the CPU package and the NVMe composite, keeps the fan fully stopped below 60 C, and ends in `level disengaged` so a runaway temperature always gets maximum airflow. Level 0 reaches as high as 60 C on purpose: idle with both work VMs up sits at 50-53 C, and a tighter ceiling put that band right on the threshold and made the fan toggle every few seconds.
+
+If thinkfan dies, the `thinkpad_acpi` watchdog hands the fan back to the EC — measured at about 125 s, which is thinkfan's hardcoded 120 s timeout plus a poll. That timeout is not configurable. Underneath it sit the CPU's own protections, which do not involve the fan at all: TM1 throttling and thermal shutdown at Tjmax 100 C.
+
+Verify a change to the curve under real load rather than by reading it:
+
+```bash
+sudo systemctl restart thinkfan
+stress --cpu "$(nproc)" --timeout 90 &
+watch -n2 'sensors coretemp-isa-0000 | grep Package; cat /proc/acpi/ibm/fan | sed -n 2,3p'
+```
 
 ## Versions
 
@@ -219,6 +236,10 @@ dotfiles/
 │   └── *.desktop.in         # @HOME@ expanded into ~/.local/share/applications/
 ├── icons/hicolor/           # app icons, symlinked into ~/.local/share/icons/hicolor/
 ├── fonts/                   # Powerlevel10k MesloLGS, symlinked into ~/.local/share/fonts/
+├── etc/                     # copied into /etc with sudo, T14 Gen 4 only
+│   ├── thinkfan.yaml        # fan curve
+│   ├── default/thinkfan
+│   └── modprobe.d/thinkfan.conf
 ├── wallpapers/
 ├── screenshots/
 │   └── take-rice-screenshot.sh  # regenerates clean.png and busy.png

@@ -1,0 +1,71 @@
+# thinkfan config for ThinkPad T14 Gen 4 (21HE), i7-1365U.
+#
+# Why this exists: the EC fan curve under the "balanced" platform profile holds
+# a ~3500 RPM floor and does not walk it back down when the load that raised it
+# goes away. That is audible at 45 C with the machine idle. This curve stops the
+# fan entirely through the idle range and ramps from there.
+#
+# Safety: thinkfan arms the thinkpad_acpi watchdog. If the daemon dies or hangs,
+# the EC takes the fan back to "auto" - measured at ~125 s after SIGKILL, which
+# is thinkfan's hardcoded 120 s timeout plus a poll. The timeout is not
+# configurable. Behind that sit the CPU's own protections, which do not depend
+# on the fan at all: TM1 throttling and thermal shutdown at Tjmax 100 C.
+#
+# The last level is "level disengaged" (fan unrestricted), so a runaway
+# temperature always ends in maximum airflow, never in a held level.
+#
+# Verified with `stress --cpu 12`: peak 85 C on the turbo burst with the fan
+# already at maximum, then a steady 62-64 C at level 2-3 for the rest of the run.
+
+sensors:
+  # Package id 0 - the number Intel throttles on. Tjmax is 100 C.
+  - hwmon: /sys/class/hwmon
+    name: coretemp
+    indices: [1]
+
+  # NVMe Composite. Vendor warning threshold is 75.8 C, critical 86.8 C, so its
+  # limits sit lower than the CPU's - the drive is the part that degrades first.
+  - hwmon: /sys/class/hwmon
+    name: nvme
+    indices: [1]
+
+fans:
+  - tpacpi: /proc/acpi/ibm/fan
+
+# Limits are [coretemp, nvme], in the sensor order above. Every level overlaps
+# the one below it by 5-6 C; that gap is the hysteresis that keeps the fan from
+# oscillating around a threshold.
+#
+# Level 0 runs to 60 C rather than something tighter because idle with both
+# work VMs up sits at 50-53 C. A 55 C ceiling put that idle band right on the
+# threshold and the fan toggled on and off every few seconds.
+levels:
+  - speed: 0
+    upper_limit: [60, 62]
+
+  - speed: 1
+    lower_limit: [54, 56]
+    upper_limit: [66, 67]
+
+  - speed: 2
+    lower_limit: [60, 61]
+    upper_limit: [71, 70]
+
+  - speed: 3
+    lower_limit: [65, 65]
+    upper_limit: [76, 73]
+
+  - speed: 4
+    lower_limit: [70, 68]
+    upper_limit: [81, 76]
+
+  - speed: 5
+    lower_limit: [75, 71]
+    upper_limit: [85, 78]
+
+  - speed: 7
+    lower_limit: [80, 74]
+    upper_limit: [91, 81]
+
+  - speed: "level disengaged"
+    lower_limit: [86, 77]

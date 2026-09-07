@@ -22,15 +22,26 @@ no "apply" step. Two consequences:
   ```
   `dotfiles-version.sh reload` does all of that in one call.
 
-Three files are deliberately *not* symlinked — see "Symlinks, not copies" in the README. The one
-that bites: `scripts/dotfiles-version.sh` is installed as a copy, so editing it does nothing until
-`./install.sh` runs again.
+Some files are deliberately *not* symlinked — see "Symlinks, not copies" in the README. The two that
+bite: `scripts/dotfiles-version.sh` and everything under `etc/` are installed as copies, so editing
+them does nothing until `./install.sh` runs again.
+
+`etc/` is the one part of this repo that leaves `$HOME`. It is copied into `/etc` with `sudo`, and
+only on a ThinkPad T14 Gen 4 — `install.sh` gates the whole block on `product_version`. `system_file`
+does the copying: it diffs first, backs up whatever was there, and sets `SYSTEM_FILES_CHANGED` so the
+caller knows whether to restart a service. Reuse it rather than adding another `sudo cp`.
+
+Changing `etc/thinkfan.yaml` changes how the machine cools itself. Do not tune the curve by reading
+it — restart thinkfan, run a real load, and watch the temperature and fan level (the README has the
+one-liner). A curve that looks reasonable can still oscillate: an earlier one put the level 0 ceiling
+at 55 C, which is exactly where this machine idles with its VMs up, and the fan toggled every few
+seconds.
 
 ## Do not run install.sh to test a small change
 
-It is idempotent, but it also runs `sudo apt install`, `chsh`, clones Oh My Zsh and Powerlevel10k,
-and downloads the Ledger AppImage. For a config edit, reload instead. Run it only when the change is
-to `install.sh` itself, or when a new file needs linking.
+It is idempotent, but it also runs `sudo apt install`, `chsh`, writes into `/etc`, clones Oh My Zsh
+and Powerlevel10k, and downloads the Ledger AppImage. For a config edit, reload instead. Run it only
+when the change is to `install.sh` itself, or when a new file needs linking.
 
 ## Never commit personal data
 
