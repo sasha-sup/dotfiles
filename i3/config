@@ -64,7 +64,11 @@ bindsym XF86MonBrightnessUp exec --no-startup-id "brightnessctl set 3%+"
 bindsym XF86MonBrightnessDown exec --no-startup-id "brightnessctl set 3%-"
 bindsym Print exec --no-startup-id "flameshot gui"
 bindsym $mod+Shift+X exec "i3lock -u -i /home/sasha/Pictures/wallpapers/1zvHQuC4-blur-1920x1200.png --tiling"
-bindsym Mod4+p exec "systemctl suspend"
+# grp:lwin_toggle takes Super_L away from the left Win key, so a Mod4 binding
+# would only fire on the right Win. Keep suspend on the same modifier as lock.
+# bindcode, not bindsym: keycode 39 is s in the us group and Cyrillic_yeru in
+# the ru one, and bindsym --to-code did not fire with Shift held.
+bindcode $mod+Shift+39 exec "systemctl suspend"
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
