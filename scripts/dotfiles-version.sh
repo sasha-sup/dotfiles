@@ -134,10 +134,12 @@ cmd_release() {
     # v2.1.1 shipped with the usage line pasted verbatim, so its changelog
     # section described nothing. The tag was already public by the time anyone
     # noticed, so catch the placeholder before it is written.
-    if [ "$description" = "one line describing the look" ]; then
-        echo "That is the placeholder from the usage example. Describe this look instead." >&2
-        exit 1
-    fi
+    case "$description" in
+        "one line describing the look" | "<one line describing the look>")
+            echo "That is the placeholder from the usage example. Describe this look instead." >&2
+            exit 1
+            ;;
+    esac
     if git rev-parse --verify --quiet "refs/tags/$version" >/dev/null; then
         echo "Version $version already exists." >&2
         exit 1

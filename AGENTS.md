@@ -63,9 +63,12 @@ Keep commits atomic: a script fix and the regenerated screenshots it produces ar
 Each look is a git tag, described in [CHANGELOG.md](CHANGELOG.md). Cut one with:
 
 ```bash
-dotfiles-version.sh release v2.1.0 "one line describing the look"
+dotfiles-version.sh release v2.1.0 "<one line describing the look>"
 git push origin master && git push origin v2.1.0
 ```
+
+The description is a placeholder, not a literal: v2.1.1 shipped with that line pasted verbatim and
+said nothing about itself. `release` now refuses it.
 
 `release` writes the changelog section from the commit subjects since the previous tag, commits it,
 and tags that commit — so the tag must be the last thing on the branch. If fixes land after a
