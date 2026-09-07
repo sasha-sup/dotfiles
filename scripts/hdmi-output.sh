@@ -2,20 +2,23 @@
 set -euo pipefail
 
 # i3 runs this from exec_always, so a restart can overlap with a still-running
-# copy. Re-exec under flock instead of pkill: matching "hdmi-output.sh" by
-# command line also kills shells that merely mention the script.
+# copy. Hold the lock on an explicit fd instead of "flock <file> <command>":
+# that form leaks its fd into every child, and the polybar we start below is a
+# long-lived one, so it kept holding the lock and starved every later run.
 lock="${XDG_RUNTIME_DIR:-/tmp}/hdmi-output.lock"
-if [ -z "${HDMI_OUTPUT_LOCKED:-}" ]; then
-    export HDMI_OUTPUT_LOCKED=1
-    exec flock -w 10 "$lock" "$0" "$@"
+exec 9>"$lock"
+if ! flock -w 10 9; then
+    echo "Another hdmi-output.sh run holds ${lock}" >&2
+    exit 1
 fi
 
 # polybar binds to one monitor name at launch and no longer reloads itself on
-# RandR changes, so whoever moves the outputs owns putting the bar back.
+# RandR changes, so whoever moves the outputs owns putting the bar back. Close
+# fd 9 for it so the bar never inherits the lock.
 launch_bar() {
     bar="$HOME/.config/polybar/launch.sh"
     [ -x "$bar" ] || return 0
-    "$bar" >/dev/null 2>&1 &
+    "$bar" >/dev/null 2>&1 9>&- &
 }
 
 panel="eDP-1"
