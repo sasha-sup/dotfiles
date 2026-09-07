@@ -10,6 +10,14 @@ if [ -z "${HDMI_OUTPUT_LOCKED:-}" ]; then
     exec flock -w 10 "$lock" "$0" "$@"
 fi
 
+# polybar binds to one monitor name at launch and no longer reloads itself on
+# RandR changes, so whoever moves the outputs owns putting the bar back.
+launch_bar() {
+    bar="$HOME/.config/polybar/launch.sh"
+    [ -x "$bar" ] || return 0
+    "$bar" >/dev/null 2>&1 &
+}
+
 panel="eDP-1"
 query=$(xrandr -q)
 
@@ -34,6 +42,9 @@ enabled=$(printf '%s\n' "$query" |
 primary=$(printf '%s\n' "$query" | awk '$2 == "connected" && $3 == "primary" { print $1 }')
 if [ "$enabled" = "$target" ] && [ "$primary" = "$target" ]; then
     echo "${target} is already the only active output; nothing to do"
+    # Waking from the lock screen leaves the layout untouched but can still have
+    # taken the bar down with it, so revive it without restarting a live one.
+    pgrep -u "$UID" -x polybar >/dev/null || launch_bar
     exit 0
 fi
 
@@ -65,3 +76,7 @@ if command -v i3-msg >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
     done < <(i3-msg -t get_workspaces | jq -r '.[] | "\(.name)\t\(.output)"')
     [ -n "$focused" ] && i3-msg "workspace \"$focused\"" >/dev/null || true
 fi
+
+# The target output changed, so the bar is either gone with the old one or
+# sitting on a monitor that no longer exists. Relaunch it on the new layout.
+launch_bar
