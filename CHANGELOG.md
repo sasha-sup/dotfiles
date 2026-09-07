@@ -3,6 +3,15 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v2.1.1 — 2026-09-07
+
+_one line describing the look_
+
+- fix(i3): lock the screen on suspend again
+- fix(i3): keep the left Win layout toggle after a keyboard hotplug
+- fix(i3): move suspend off the left Win key
+- fix(polybar): bring the bar back after the lock screen
+
 ## v2.1.0 — 2026-09-06
 
 _external monitor is the only output_
