@@ -3,6 +3,14 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v2.2.0 — 2026-09-07
+
+_external monitor primary, laptop panel stacked below it_
+
+- fix(display): stop polybar from holding the layout lock
+- feat(display): put the laptop panel below the external monitor
+- fix(polybar): keep the systray on the primary monitor
+
 ## v2.1.1 — 2026-09-07
 
 _one line describing the look_
