@@ -13,7 +13,7 @@ _external monitor primary, laptop panel stacked below it_
 
 ## v2.1.1 — 2026-09-07
 
-_one line describing the look_
+_the lock screen behaves again: suspend locks, the bar comes back_
 
 - fix(i3): lock the screen on suspend again
 - fix(i3): keep the left Win layout toggle after a keyboard hotplug
