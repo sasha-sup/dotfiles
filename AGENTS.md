@@ -37,16 +37,28 @@ one-liner). A curve that looks reasonable can still oscillate: an earlier one pu
 at 55 C, which is exactly where this machine idles with its VMs up, and the fan toggled every few
 seconds.
 
-Two failure modes there are silent, so check for them explicitly:
+Three failure modes there are silent, so check for them explicitly:
 
 - `tpacpi` sensor indices are 0-based; `hwmon` indices are 1-based. A wrong `tpacpi` index reads
   `-128`, which sits under every limit, so the sensor is dead and votes on nothing. The config still
   parses and the daemon still runs.
 - A sensor can parse, read a real number, and still never matter, because another sensor is always
   hotter. That is fine for a deliberate backstop and a bug anywhere else.
+- `-b-5` in `etc/default/thinkfan` is part of the curve, not a tuning detail. The package sensor
+  spikes +9 to +11 C in a single second and the default positive bias turns that into fan commands.
+  Change thresholds and bias in separate passes, or you cannot tell which one did what.
 
-Both show up in the daemon's own output. Stop the service, run `thinkfan -c /etc/thinkfan.yaml -n`,
-and read the `Temperatures(bias):` line: one number per sensor, in config order, all plausible.
+The first two show up in the daemon's own output. Stop the service, run
+`thinkfan -c /etc/thinkfan.yaml -n`, and read the `Temperatures(bias):` line: one number per sensor,
+in config order, all plausible.
+
+Sampling rate matters when judging this. The daemon polls every 2 s and the spikes last about one
+second, so a `watch`-style loop at 5 or 10 s misses them entirely and the fan looks like it is
+reacting to nothing. Sample at 1 s before concluding a threshold is wrong.
+
+Idle here is not a fixed number either, and it moves with the curve you are testing: it settles
+around 53-57 C with the fan at level 1 and 58-62 C with the fan stopped. Re-measure idle after
+changing the floor rather than reusing a number from a previous revision.
 
 ## Do not run install.sh to test a small change
 

@@ -1,5 +1,20 @@
 # Config path is explicit so a stray /etc/thinkfan.conf cannot shadow the YAML.
-# -s 2: poll every 2 s instead of 5. The curve keeps the fan off below 55 C, so
-# a spike has to be caught quickly rather than up to five seconds later.
-THINKFAN_ARGS="-c /etc/thinkfan.yaml -s 2"
+# -s 2: poll every 2 s instead of 5, so a real thermal ramp is caught quickly.
+#
+# -b-5: negative rising-temperature bias, and it is load-bearing - the curve
+# flaps badly without it. This CPU's on-die package sensor jumps +9 to +11 C in
+# a single second on brief background turbo and falls straight back. thinkfan's
+# default positive bias amplifies those into fan commands: measured 16 level
+# changes in five idle minutes, including jumps to level 5 and 7 while the CPU
+# was really at 58-62 C. With -b-5 the same five minutes produced zero.
+#
+# -5 rather than -10 because the bias cannot tell a spike from a real ramp, it
+# only sees one cycle's delta. At -10 a genuine 60->92 C climb was damped by the
+# full 32 C and the fan stayed at level 0 while the CPU sat at 92. -5 cancels an
+# +11 spike (70 - 5.5 = 64.5, under the threshold) and still lets a +32 ramp
+# through (92 - 16 = 76, over it).
+#
+# Note the attached syntax: -b-5, not -b -5. getopt reads the spaced form as an
+# option and fails.
+THINKFAN_ARGS="-c /etc/thinkfan.yaml -s 2 -b-5"
 DAEMON_ARGS="-q"
