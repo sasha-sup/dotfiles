@@ -133,6 +133,8 @@ alias ssh-proxy="bash $SCRIPTS_BASE/ssh-proxy.sh"
 alias kube-context="bash $SCRIPTS_BASE/kube-context.sh"
 alias kube-exec="bash $SCRIPTS_BASE/kube-exec.sh"
 alias work="bash $SCRIPTS_BASE/start-vms.sh"
+alias gov="cd /home/sasha/Code/works/gov"
+alias kaz="cd /home/sasha/Code/works/kaz"
 
 # ---------- Environment ----------
 export EDITOR="$(which vim)"
