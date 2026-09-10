@@ -29,11 +29,12 @@ if ! printf '%s\n' "$query" | grep -q "^${panel} "; then
     exit 1
 fi
 
-# The external monitor is the main screen: it becomes primary at 0x0 and the
-# laptop panel is stacked directly below it. Falling back to the panel alone
-# keeps the machine usable when nothing is connected.
+# The laptop panel is the main screen: it is the primary output and takes the
+# orphaned workspaces. The external monitor is the second screen and keeps the
+# top of the stack at 0x0, with the panel directly below it, because that is
+# where it physically stands. Primary and 0x0 are separate things here.
 external=$(printf '%s\n' "$query" | awk -v panel="$panel" '$2 == "connected" && $1 != panel { print $1; exit }')
-target="${external:-$panel}"
+target="$panel"
 
 # Geometry of one output as xrandr reports it ("1920x1080+0+2160"), empty when
 # the output is off. The mode sits at field 3 or 4 depending on "primary".
@@ -57,10 +58,10 @@ if [ -n "$external" ]; then
     panel_geometry=$(geometry "$panel")
     external_height=${external_geometry#*x}
     external_height=${external_height%%+*}
-    if [ "$enabled" = "$want_enabled" ] && [ "$primary" = "$external" ] &&
+    if [ "$enabled" = "$want_enabled" ] && [ "$primary" = "$panel" ] &&
         [ "${external_geometry#*+}" = "0+0" ] &&
         [ "${panel_geometry#*+}" = "0+${external_height}" ]; then
-        echo "${external} is already primary with ${panel} below it; nothing to do"
+        echo "${panel} is already primary with ${external} above it; nothing to do"
         # Waking from the lock screen leaves the layout untouched but can still
         # have taken the bar down with it, so revive it without restarting a
         # live one.
@@ -76,15 +77,18 @@ fi
 # A single xrandr call places the outputs we keep and switches every other one
 # off, including disconnected ones that xrandr still keeps active with a stale
 # mode. Leaving those on makes i3 keep workspaces bound to invisible outputs.
-args=(--output "$target" --auto --primary --pos 0x0)
 if [ -n "$external" ]; then
-    # --below anchors the panel to the external monitor's left edge, one full
-    # external height down, so the desktop is a single vertical stack.
-    args+=(--output "$panel" --auto --below "$external")
+    # The external monitor holds 0x0 and --below anchors the panel to its left
+    # edge, one full external height down, so the desktop is a single vertical
+    # stack. --primary rides on the panel, not on whoever sits at the origin.
+    args=(--output "$external" --auto --pos 0x0
+        --output "$panel" --auto --primary --below "$external")
+else
+    args=(--output "$panel" --auto --primary --pos 0x0)
 fi
 while read -r name; do
-    [ "$name" = "$target" ] && continue
-    if [ -n "$external" ] && [ "$name" = "$panel" ]; then
+    [ "$name" = "$panel" ] && continue
+    if [ -n "$external" ] && [ "$name" = "$external" ]; then
         continue
     fi
     args+=(--output "$name" --off)
@@ -93,7 +97,7 @@ done < <(printf '%s\n' "$query" | awk '/^[^ ]+ (connected|disconnected)/ { print
 xrandr "${args[@]}"
 
 if [ -n "$external" ]; then
-    echo "External monitor ${external} is primary; ${panel} sits below it"
+    echo "${panel} is primary; external monitor ${external} sits above it"
 else
     echo "External monitor not found; only ${panel} is enabled"
 fi

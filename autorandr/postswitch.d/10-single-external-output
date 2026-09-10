@@ -2,7 +2,7 @@
 # autorandr picks a profile by EDID fingerprint. An unknown external monitor
 # matches nothing, so autorandr-lid-listener.service falls back to its default
 # profile ("mobile": external off, laptop panel on) — not the layout this
-# machine wants (external primary, panel below it). Re-assert the rule after
+# machine wants (panel primary, external above it). Re-assert the rule after
 # every switch: hdmi-output.sh is the single source of truth for the layout.
 # It only calls xrandr, never autorandr, so this cannot loop.
 exec "$HOME/.local/bin/hdmi-output.sh"
