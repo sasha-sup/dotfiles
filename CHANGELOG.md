@@ -3,6 +3,24 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v2.3.0 — 2026-09-10
+
+_a real lock screen: clock, date and the active keyboard layout_
+
+- docs(changelog): describe what v2.1.1 actually changed
+- fix(scripts): reject the placeholder release description
+- docs(agents): mark the release description as a placeholder
+- perf(picom): composite on the iGPU instead of the X server
+- feat(etc): install thinkfan from the repo on the T14 Gen 4
+- fix(etc): read the chassis sensor thinkfan was silently missing
+- fix(etc): stop the fan from stopping, and damp the sensor spikes
+- fix(etc): make thinkfan actually survive a boot
+- perf(picom): dial the bar blur back to a readable radius
+- feat(display): make the laptop panel the primary output
+- fix(i3): put suspend back on Fn+F7
+- feat(lock): themed lock screen on i3lock-color
+- feat(zsh): add gov and kaz work directory aliases
+
 ## v2.2.0 — 2026-09-07
 
 _external monitor primary, laptop panel stacked below it_
