@@ -29,7 +29,13 @@ exec --no-startup-id dex --autostart --environment i3
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock -u -i /home/sasha/Pictures/wallpapers/1zvHQuC4-blur-1920x1200.png --nofork
+#
+# Both this and the $mod+Shift+X binding call lock.sh instead of spelling out an
+# i3lock command line. Two hand-written ones drifted: only one grew --tiling, so
+# locking before suspend left a grey band across the laptop panel while the
+# manual lock was fine. The image, the palette and the fallback to the packaged
+# i3lock all live in the script now.
+exec --no-startup-id xss-lock --transfer-sleep-lock -- $HOME/.local/bin/lock.sh
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
@@ -67,7 +73,7 @@ bindsym XF86AudioMicMute exec --no-startup-id wpctl set-mute @DEFAULT_AUDIO_SOUR
 bindsym XF86MonBrightnessUp exec --no-startup-id "brightnessctl set 3%+"
 bindsym XF86MonBrightnessDown exec --no-startup-id "brightnessctl set 3%-"
 bindsym Print exec --no-startup-id "flameshot gui"
-bindsym $mod+Shift+X exec "i3lock -u -i /home/sasha/Pictures/wallpapers/1zvHQuC4-blur-1920x1200.png --tiling"
+bindsym $mod+Shift+X exec --no-startup-id $HOME/.local/bin/lock.sh
 # Suspend from the keyboard, on the same modifier as lock. Kept alongside the
 # Fn+F7 binding below because that one only exists on the external keyboard.
 # bindcode, not bindsym: keycode 39 is s in the us group and Cyrillic_yeru in

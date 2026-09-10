@@ -85,9 +85,17 @@ fi
 # --- Wallpapers ---
 link "$DOTFILES_DIR/wallpapers/win-xp-linux.png"      "$HOME/Pictures/wallpapers/win-xp-linux.png"
 link "$DOTFILES_DIR/wallpapers/win-xp-linux-blur.png" "$HOME/Pictures/wallpapers/win-xp-linux-blur.png"
-# The blur copy is pre-rendered to the panel size because i3lock cannot scale.
+# The lock copy is pre-rendered to the panel size because i3lock cannot scale.
+# One panel-sized copy is enough for every layout: i3lock-color draws it from
+# each output's own origin, so it never has to span the whole X screen. It is
+# blurred and dimmed. -blur is what -blur-1920x1200.png already is; that file is
+# kept as the source and is not linked anywhere itself. Regenerate the lock copy
+# with:
+#   magick 1zvHQuC4-blur-1920x1200.png -brightness-contrast -35x-10 \
+#          1zvHQuC4-lock-1920x1200.png
+# The dim is not cosmetic — see the comment in scripts/lock.sh.
 link "$DOTFILES_DIR/wallpapers/1zvHQuC4.png"                "$HOME/Pictures/wallpapers/1zvHQuC4.png"
-link "$DOTFILES_DIR/wallpapers/1zvHQuC4-blur-1920x1200.png" "$HOME/Pictures/wallpapers/1zvHQuC4-blur-1920x1200.png"
+link "$DOTFILES_DIR/wallpapers/1zvHQuC4-lock-1920x1200.png" "$HOME/Pictures/wallpapers/1zvHQuC4-lock-1920x1200.png"
 
 # --- Scripts ---
 SCRIPTS_DIR="$HOME/.local/bin"
@@ -119,6 +127,15 @@ for size in 128x128 256x256 512x512 1024x1024; do
     link "$DOTFILES_DIR/icons/hicolor/$size/apps/ledger-live-desktop.png" \
          "$ICONS_DIR/$size/apps/ledger-live-desktop.png"
 done
+
+# --- Lock screen ---
+# scripts/lock.sh degrades to the packaged i3lock without this, so a failure
+# here is cosmetic, not a machine that suspends unlocked.
+if [ ! -x /usr/local/bin/i3lock-color ]; then
+    echo "Building i3lock-color..."
+    "$DOTFILES_DIR/scripts/i3lock-color-install.sh" || \
+        echo "WARNING: i3lock-color build failed. lock.sh falls back to plain i3lock. Run manually: $DOTFILES_DIR/scripts/i3lock-color-install.sh"
+fi
 
 if [ ! -x "$HOME/.local/bin/ledger" ]; then
     echo "Installing Ledger Live Desktop AppImage..."
