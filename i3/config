@@ -41,8 +41,12 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock -u -i /home/sasha/
 # the picture is 16:9 and the panel is 16:10, so fill-crop instead of stretch
 exec_always feh --bg-fill /home/sasha/Pictures/wallpapers/1zvHQuC4.png
 # The empty -option clears whatever Xorg set at device add, otherwise setxkbmap
-# merges the two and Win+Space keeps toggling as well.
-exec_always --no-startup-id "setxkbmap -layout us,ru -option -option grp:lwin_toggle"
+# merges the old set into the new one and the dropped toggle keeps firing too.
+#
+# The toggle is a Win+Space chord, not the bare left Win. grp:lwin_toggle would
+# rewrite that key to ISO_Next_Group with a LockGroup action, which strips
+# SetMods(Mod4) from it — and the Fn+F7 suspend binding below rides on Mod4.
+exec_always --no-startup-id "setxkbmap -layout us,ru -option -option grp:win_space_toggle"
 exec_always /bin/bash $HOME/.local/bin/fan-speed.sh
 exec_always /bin/bash $HOME/.local/bin/bat-lifetime.sh
 exec_always /bin/bash $HOME/.local/bin/bat-low-alert.sh
@@ -64,11 +68,17 @@ bindsym XF86MonBrightnessUp exec --no-startup-id "brightnessctl set 3%+"
 bindsym XF86MonBrightnessDown exec --no-startup-id "brightnessctl set 3%-"
 bindsym Print exec --no-startup-id "flameshot gui"
 bindsym $mod+Shift+X exec "i3lock -u -i /home/sasha/Pictures/wallpapers/1zvHQuC4-blur-1920x1200.png --tiling"
-# grp:lwin_toggle takes Super_L away from the left Win key, so a Mod4 binding
-# would only fire on the right Win. Keep suspend on the same modifier as lock.
+# Suspend from the keyboard, on the same modifier as lock. Kept alongside the
+# Fn+F7 binding below because that one only exists on the external keyboard.
 # bindcode, not bindsym: keycode 39 is s in the us group and Cyrillic_yeru in
 # the ru one, and bindsym --to-code did not fire with Shift held.
 bindcode $mod+Shift+39 exec "systemctl suspend"
+# Fn+F7 on the TrackPoint Keyboard II is not a key of its own: the firmware
+# emits a Super_L+P chord, all four events on the same timestamp. Binding that
+# chord is why the layout toggle has to stay off the bare left Win.
+# bindcode, not bindsym: keycode 33 is p in the us group and Cyrillic_ze in the
+# ru one, so a keysym binding would stop firing whenever ru is selected.
+bindcode Mod4+33 exec "systemctl suspend"
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod

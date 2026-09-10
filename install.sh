@@ -57,6 +57,14 @@ link "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
 link "$DOTFILES_DIR/autorandr/postswitch.d/10-single-external-output" \
      "$HOME/.config/autorandr/postswitch.d/10-single-external-output"
 
+# --- Keyboard layout (system-wide) ---
+# Xorg re-reads this on every keyboard device add, so it overrides the setxkbmap
+# that i3 runs at startup: a Bluetooth keyboard reconnect was enough to bring the
+# old group toggle back. Keep the two in sync — i3/config runs the same options.
+SYSTEM_FILES_CHANGED=0
+system_file "$DOTFILES_DIR/etc/X11/xorg.conf.d/00-keyboard.conf" \
+            /etc/X11/xorg.conf.d/00-keyboard.conf
+
 # --- Private data ---
 # dotfiles.env holds hosts, UUIDs and recipients, so it is never committed and
 # never symlinked: the repo only ships a template to seed it once.
