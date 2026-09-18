@@ -13,7 +13,7 @@ if curl -L -# "$URL" -o "$OUT_DIR/$FILE_NAME"; then
     sudo rm -r $BIN_PATH/Updater
     sudo tar -xf $OUT_DIR/$FILE_NAME -C $BIN_PATH --strip-components=1
     echo "Install complete, starting Telegram Desktop..."
-    i3-msg 'workspace 10; exec Telegram'
+    i3-msg 'workspace 9; exec Telegram'
     rm $OUT_DIR/$FILE_NAME
 else
    echo "Download error"
