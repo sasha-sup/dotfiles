@@ -95,8 +95,8 @@ tiling_drag modifier titlebar
 
 # === Appearance ===
 # Убрать заголовки окон, тонкая рамка
-default_border pixel 2
-default_floating_border pixel 2
+default_border pixel 3
+default_floating_border pixel 3
 
 # Отступы между окнами.
 # В i3 зазор у края экрана = outer + inner, поэтому outer 0 даёт ровно 10 px
@@ -105,14 +105,14 @@ default_floating_border pixel 2
 gaps inner 10
 gaps outer 0
 gaps top 39
-smart_borders on
+# smart_borders on
 # smart_gaps on
 
 # Цвета окон
 # class                 border  backgr  text    indicator child_border
 client.focused          #cb80d8 #824c8c #ffffff #e595f7   #cb80d8
-client.focused_inactive #3a283d #3a283d #a68bab #4b374d   #3a283d
-client.unfocused        #311e33 #311e33 #a68bab #3a283d   #311e33
+client.focused_inactive #9b8cf0 #3a283d #a68bab #4b374d   #9b8cf0
+client.unfocused        #824c8c #311e33 #a68bab #3a283d   #824c8c
 client.urgent           #dc3d3d #dc3d3d #ffffff #ec3942   #dc3d3d
 client.placeholder      #000000 #311e33 #ffffff #000000   #311e33
 client.background       #311e33
