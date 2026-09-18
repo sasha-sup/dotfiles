@@ -3,6 +3,13 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v2.4.0 — 2026-09-18
+
+_window borders you can actually see_
+
+- feat(i3): make window borders visible
+- feat(scripts): open Telegram on workspace 9 after an update
+
 ## v2.3.0 — 2026-09-10
 
 _a real lock screen: clock, date and the active keyboard layout_
