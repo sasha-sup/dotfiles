@@ -3,6 +3,12 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v2.4.1 — 2026-09-20
+
+_fingerprint unlock on the lock screen_
+
+- fix(lock): let the fingerprint reader actually run
+
 ## v2.4.0 — 2026-09-18
 
 _window borders you can actually see_
