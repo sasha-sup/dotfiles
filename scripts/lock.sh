@@ -29,9 +29,11 @@ image="$HOME/Pictures/wallpapers/1zvHQuC4-lock-1920x1200.png"
 # needs --tiling to reach the bottom of the panel at all; without it the last
 # 1080 rows stay unpainted grey. Tiling puts a seam at y=1200. That is the ugly
 # half of "plain but locked" and only shows up when the build is broken.
+#
+# No --ignore-empty-password here either, for the fingerprint reason below.
 if ! command -v i3lock-color >/dev/null 2>&1; then
     echo "i3lock-color not found, falling back to i3lock" >&2
-    exec i3lock --nofork --ignore-empty-password --image "$image" --tiling
+    exec i3lock --nofork --image "$image" --tiling
 fi
 
 # Colours are the polybar palette: 311e33 background, 824c8c primary, cb80d8
@@ -62,9 +64,26 @@ fi
 # The --pass-*-keys let volume and brightness through while locked. That is a
 # deliberate trade: someone at the machine can change the volume without the
 # password. Nothing else is passed.
+#
+# --ignore-empty-password is absent on purpose, and that absence is the whole
+# fingerprint story. i3lock has no fingerprint support of its own — it only
+# enters the PAM stack when a password is submitted, and pam_fprintd is the
+# first auth module in /etc/pam.d/common-auth (i3lock -> login -> common-auth).
+# So submitting an empty field is the only way to arm the reader. With the flag,
+# an empty Enter was swallowed before pam_authenticate() and the Goodix sensor
+# never woke up once. Without it: press Enter, then touch the reader.
+#
+# Safe because the account has a real password hash (passwd -S sasha reports P),
+# so the nullok on pam_unix cannot turn an empty submit into a login.
+#
+# The cost is a frozen screen: pam_fprintd holds the stack for up to 10s
+# (timeout=10 in common-auth) and i3lock blocks on that call, so an empty Enter
+# with no finger means ten unresponsive seconds, then the empty password falls
+# through to pam_unix and the screen says "wrong" with the failed-attempt count
+# bumped. Shortening that wait means a dedicated /etc/pam.d/i3lock that does not
+# include login; common-auth is shared with sudo and login and is not the place.
 exec i3lock-color \
     --nofork \
-    --ignore-empty-password \
     --image "$image" --tiling \
     --clock --indicator \
     --bar-indicator --bar-count 1 --bar-orientation horizontal \
