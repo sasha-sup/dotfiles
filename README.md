@@ -15,7 +15,7 @@ i3wm rice on Debian Trixie (ThinkPad T14)
 - **Shell:** Zsh + Oh My Zsh + Powerlevel10k + fzf
 - **Font:** JetBrainsMono Nerd Font
 - **Emoji:** Noto Color Emoji via fontconfig fallback
-- **Wallpaper:** Neon shopfront shot (`wallpapers/1zvHQuC4.png`)
+- **Wallpaper:** Neon Hong Kong street at night (`wallpapers/914670.jpg`)
 
 ## Polybar Modules
 

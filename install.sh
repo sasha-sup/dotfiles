@@ -91,9 +91,16 @@ link "$DOTFILES_DIR/wallpapers/win-xp-linux-blur.png" "$HOME/Pictures/wallpapers
 # blurred and dimmed. -blur is what -blur-1920x1200.png already is; that file is
 # kept as the source and is not linked anywhere itself. Regenerate the lock copy
 # with:
-#   magick 1zvHQuC4-blur-1920x1200.png -brightness-contrast -35x-10 \
-#          1zvHQuC4-lock-1920x1200.png
+#   magick 914670-blur-1920x1200.png -brightness-contrast -35x-10 \
+#          914670-lock-1920x1200.png
+# The blur source itself came 16:9, so it was fill-cropped to the panel first:
+#   magick 914670-blur.png -resize 1920x1200^ -gravity center -extent 1920x1200 \
+#          914670-blur-1920x1200.png
 # The dim is not cosmetic — see the comment in scripts/lock.sh.
+# Scaled down from the 3840x2160 original to keep the repo small. 2560x1440
+# rather than 1920x1080, because fill-cropping to the 16:10 panel upscales it.
+link "$DOTFILES_DIR/wallpapers/914670.jpg"                "$HOME/Pictures/wallpapers/914670.jpg"
+link "$DOTFILES_DIR/wallpapers/914670-lock-1920x1200.png" "$HOME/Pictures/wallpapers/914670-lock-1920x1200.png"
 link "$DOTFILES_DIR/wallpapers/1zvHQuC4.png"                "$HOME/Pictures/wallpapers/1zvHQuC4.png"
 link "$DOTFILES_DIR/wallpapers/1zvHQuC4-lock-1920x1200.png" "$HOME/Pictures/wallpapers/1zvHQuC4-lock-1920x1200.png"
 

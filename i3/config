@@ -45,7 +45,7 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- $HOME/.local/bin/lock.sh
 # defailt debial wallpaper
 # exec_always feh --bg-scale /usr/share/images/desktop-base/default
 # the picture is 16:9 and the panel is 16:10, so fill-crop instead of stretch
-exec_always feh --bg-fill /home/sasha/Pictures/wallpapers/1zvHQuC4.png
+exec_always feh --bg-fill $HOME/Pictures/wallpapers/914670.jpg
 # The empty -option clears whatever Xorg set at device add, otherwise setxkbmap
 # merges the old set into the new one and the dropped toggle keeps firing too.
 #

@@ -18,7 +18,7 @@ set -euo pipefail
 # Dimmed as well as blurred. Blur alone was not enough: the wallpaper is neon on
 # black, and over the bright stripes the date and the layout readout were
 # unreadable at any weight.
-image="$HOME/Pictures/wallpapers/1zvHQuC4-lock-1920x1200.png"
+image="$HOME/Pictures/wallpapers/914670-lock-1920x1200.png"
 
 # i3lock-color is built from source (scripts/i3lock-color-install.sh), not
 # packaged, so a dist-upgrade that moves a library ABI can leave it unable to
