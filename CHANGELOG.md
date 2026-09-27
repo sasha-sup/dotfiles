@@ -3,6 +3,13 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v3.0.0 — 2026-09-27
+
+_neon Hong Kong street at night_
+
+- fix(polybar): stop duplicate bars after an i3 restart
+- feat(wallpapers): switch desktop, lock screen and kitty to neon street shot
+
 ## v2.4.1 — 2026-09-20
 
 _fingerprint unlock on the lock screen_
