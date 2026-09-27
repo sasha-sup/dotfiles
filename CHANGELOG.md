@@ -3,6 +3,13 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v3.0.1 — 2026-09-27
+
+_translucent bar and matching terminal colour_
+
+- style(polybar): let more of the wallpaper through the bar
+- style(kitty): tint the terminal with the bar background colour
+
 ## v3.0.0 — 2026-09-27
 
 _neon Hong Kong street at night_
