@@ -1,4 +1,4 @@
-/* rofi Telegram purple theme — matches kitty/polybar/i3 palette */
+/* rofi Cyberpunk 2077 HUD theme — matches kitty/polybar/i3 palette */
 configuration {
     modi:                "drun,run,window";
     show-icons:          true;
@@ -9,14 +9,16 @@ configuration {
 }
 
 * {
-    bg:        #311e33;
-    bg-alt:    #3a283d;
-    fg:        #f5f5f5;
-    fg-dim:    #a68bab;
-    accent:    #cb80d8;
-    accent2:   #e595f7;
-    /* selection sits under white text, so it uses the deep shade of the accent */
-    accent-bg: #824c8c;
+    bg:        #0e0e17;
+    bg-alt:    #121221;
+    /* the game draws menu text in its HUD red, not in white */
+    fg:        #ff6159;
+    fg-dim:    #ae3b36;
+    accent:    #ff6159;
+    accent2:   #ff7167;
+    /* selection is the game's hover: cyan text on a dark cyan field */
+    select:    #5ef6ff;
+    select-bg: #172c2e;
 
     background-color: transparent;
     text-color:       @fg;
@@ -26,7 +28,7 @@ window {
     background-color: @bg;
     border:           2px;
     border-color:     @accent;
-    border-radius:    12px;
+    border-radius:    0;
     width:            560px;
     padding:          0;
 }
@@ -38,10 +40,13 @@ mainbox {
 
 inputbar {
     background-color: @bg-alt;
-    border-radius:    8px;
+    border-radius:    0;
+    /* red stripe on the left edge, the way the in-game Arasaka terminals mark input */
+    border:           0 0 0 3px;
+    border-color:     @accent;
     padding:          10px 14px;
     spacing:          10px;
-    children:         [ prompt, entry ];
+    children:         [ entry ];
 }
 
 prompt {
@@ -49,7 +54,7 @@ prompt {
 }
 
 entry {
-    text-color:        @fg;
+    text-color:        @select;
     placeholder:       "search…";
     placeholder-color: @fg-dim;
     cursor:            text;
@@ -68,7 +73,10 @@ listview {
 element {
     padding:          8px 12px;
     spacing:          12px;
-    border-radius:    8px;
+    border-radius:    0;
+    /* same width as the selected stripe, so the text does not jump on hover */
+    border:           0 0 0 3px;
+    border-color:     @bg;
     background-color: @bg;
     text-color:       @fg;
 }
@@ -81,10 +89,10 @@ element alternate.normal { background-color: @bg; text-color: @fg; }
 element alternate.urgent { background-color: @bg; text-color: @accent; }
 element alternate.active { background-color: @bg; text-color: @accent2; }
 
-/* выделенное — фиолетовый фон, белый текст */
-element selected.normal  { background-color: @accent-bg; text-color: #ffffff; }
-element selected.urgent  { background-color: @accent-bg; text-color: #ffffff; }
-element selected.active  { background-color: @accent-bg; text-color: #ffffff; }
+/* выделенное — как наведение в игре: бирюзовый текст и полоса слева */
+element selected.normal  { background-color: @select-bg; text-color: @select; border: 0 0 0 3px; border-color: @select; }
+element selected.urgent  { background-color: @select-bg; text-color: @select; border: 0 0 0 3px; border-color: @select; }
+element selected.active  { background-color: @select-bg; text-color: @select; border: 0 0 0 3px; border-color: @select; }
 
 element-icon {
     size:             1.2em;

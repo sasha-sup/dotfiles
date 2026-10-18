@@ -15,10 +15,11 @@ set -euo pipefail
 # never get drawn on the panel, and the part that repeats shows up as a second
 # seam two thirds down the laptop screen.
 #
-# Dimmed as well as blurred. Blur alone was not enough: the wallpaper is neon on
-# black, and over the bright stripes the date and the layout readout were
-# unreadable at any weight.
-image="$HOME/Pictures/wallpapers/914670-lock-1920x1200.png"
+# Same picture as the desktop, not dimmed or blurred, with one dark plate baked
+# in behind the text: over the bright lanterns the date and layout readout were
+# unreadable at any weight. The plate spans 660..1260 x 390..830, which covers
+# iy-120 (clock) to iy+200 (modif) below; move the text and it has to move too.
+image="$HOME/Pictures/wallpapers/koi-lanterns-lock-1920x1200.png"
 
 # i3lock-color is built from source (scripts/i3lock-color-install.sh), not
 # packaged, so a dist-upgrade that moves a library ABI can leave it unable to
@@ -36,8 +37,9 @@ if ! command -v i3lock-color >/dev/null 2>&1; then
     exec i3lock --nofork --image "$image" --tiling
 fi
 
-# Colours are the polybar palette: 311e33 background, 824c8c primary, cb80d8
-# accent, a68bab muted foreground, dc3d3d alert. i3lock-color wants RRGGBBAA.
+# Colours are the polybar palette (Cyberpunk 2077 HUD): 8e272a primary,
+# ff6159 red text, ae3b36 muted red, 5ef6ff cyan while verifying, ff3e34
+# alert, ffd741 yellow for the caps lock warning. i3lock-color wants RRGGBBAA.
 #
 # --bar-indicator replaces the default ring with a bar. One minibar, a base only
 # 4px thick, so it reads as a line under the text rather than a widget: the ring
@@ -88,22 +90,22 @@ exec i3lock-color \
     --clock --indicator \
     --bar-indicator --bar-count 1 --bar-orientation horizontal \
     --bar-total-width 420 --bar-base-width 4 --bar-max-height 20 \
-    --bar-pos "ix-210:iy+120" --bar-color 824c8ccc \
-    --ring-color cb80d8ff --ringver-color cb80d8ff --ringwrong-color dc3d3dff \
+    --bar-pos "ix-210:iy+120" --bar-color 8e272acc \
+    --ring-color ff6159ff --ringver-color 5ef6ffff --ringwrong-color ff3e34ff \
     --time-str "%H:%M" --time-size 56 --time-pos "ix:iy-120" \
-    --time-color f5f5f5ff --time-font "JetBrainsMono Nerd Font" \
-    --timeoutline-color 1a0f1bcc --timeoutline-width 2 \
+    --time-color ff6159ff --time-font "JetBrainsMono Nerd Font" \
+    --timeoutline-color 0e0e17cc --timeoutline-width 2 \
     --date-str "%A, %d %B" --date-size 20 --date-pos "ix:iy-20" \
-    --date-color d8c7dcff --date-font "JetBrainsMono Nerd Font" \
+    --date-color ae3b36ff --date-font "JetBrainsMono Nerd Font" \
     --greeter-text "$(id -un)" --greeter-size 18 --greeter-pos "ix:iy+22" \
-    --greeter-color f5f5f5ff --greeter-font "JetBrainsMono Nerd Font" \
+    --greeter-color c0c8cfff --greeter-font "JetBrainsMono Nerd Font" \
     --keylayout 1 --layout-size 17 --layout-pos "ix:iy+60" \
-    --layout-color d8c7dcff --layout-font "JetBrainsMono Nerd Font" \
+    --layout-color ae3b36ff --layout-font "JetBrainsMono Nerd Font" \
     --verif-text "verifying…" --verif-size 16 --verif-pos "ix:iy+170" \
-    --verif-color cb80d8ff --verif-font "JetBrainsMono Nerd Font" \
+    --verif-color 5ef6ffff --verif-font "JetBrainsMono Nerd Font" \
     --wrong-text "wrong" --wrong-size 16 --wrong-pos "ix:iy+170" \
-    --wrong-color dc3d3dff --wrong-font "JetBrainsMono Nerd Font" \
+    --wrong-color ff3e34ff --wrong-font "JetBrainsMono Nerd Font" \
     --noinput-text "no input" \
-    --modif-color dc3d3dff --modif-size 15 --modif-pos "ix:iy+200" \
+    --modif-color ffd741ff --modif-size 15 --modif-pos "ix:iy+200" \
     --show-failed-attempts \
     --pass-media-keys --pass-volume-keys --pass-screen-keys

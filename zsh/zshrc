@@ -153,6 +153,8 @@ export NVM_DIR="$HOME/.nvm"
 
 # ---------- fzf (fuzzy finder: Ctrl-R history, Ctrl-T files, Alt-C dirs) ----------
 if command -v fzf >/dev/null 2>&1; then
+    # bar palette: red text and prompt, cyan for the current line and matches
+    export FZF_DEFAULT_OPTS="--color=bg:#0e0e17,bg+:#172c2e,fg:#c0c8cf,fg+:#5ef6ff,hl:#ff6159,hl+:#ff6159,border:#ae3b36,prompt:#ff6159,pointer:#5ef6ff,marker:#ffd741,spinner:#ae3b36,info:#ae3b36,header:#ae3b36"
     [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
     [ -f /usr/share/doc/fzf/examples/completion.zsh ]   && source /usr/share/doc/fzf/examples/completion.zsh
 fi

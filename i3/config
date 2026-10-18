@@ -44,8 +44,8 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- $HOME/.local/bin/lock.sh
 # sasha
 # defailt debial wallpaper
 # exec_always feh --bg-scale /usr/share/images/desktop-base/default
-# the picture is 16:9 and the panel is 16:10, so fill-crop instead of stretch
-exec_always feh --bg-fill $HOME/Pictures/wallpapers/914670.jpg
+# the picture is 21:9 and the panel is 16:10, so fill-crop instead of stretch
+exec_always feh --bg-fill $HOME/Pictures/wallpapers/koi-lanterns.jpg
 # The empty -option clears whatever Xorg set at device add, otherwise setxkbmap
 # merges the old set into the new one and the dropped toggle keeps firing too.
 #
@@ -95,27 +95,28 @@ tiling_drag modifier titlebar
 
 # === Appearance ===
 # Убрать заголовки окон, тонкая рамка
-default_border pixel 3
-default_floating_border pixel 3
+default_border pixel 2
+default_floating_border pixel 2
 
 # Отступы между окнами.
-# В i3 зазор у края экрана = outer + inner, поэтому outer 0 даёт ровно 10 px
+# В i3 зазор у края экрана = outer + inner, поэтому outer 0 даёт ровно 8 px
 # слева, справа и снизу — столько же, сколько между самими окнами.
-# gaps top = offset-y полибара (10) + его высота (29) + 10 = 49, минус inner 10.
-gaps inner 10
+# gaps top = offset-y полибара (8) + его высота (29) + 8 = 45, минус inner 8.
+gaps inner 8
 gaps outer 0
-gaps top 39
+gaps top 37
 # smart_borders on
 # smart_gaps on
 
 # Цвета окон
 # class                 border  backgr  text    indicator child_border
-client.focused          #cb80d8 #824c8c #ffffff #e595f7   #cb80d8
-client.focused_inactive #9b8cf0 #3a283d #a68bab #4b374d   #9b8cf0
-client.unfocused        #824c8c #311e33 #a68bab #3a283d   #824c8c
-client.urgent           #dc3d3d #dc3d3d #ffffff #ec3942   #dc3d3d
-client.placeholder      #000000 #311e33 #ffffff #000000   #311e33
-client.background       #311e33
+# Палитра HUD Cyberpunk 2077: бирюзовый — выбранное, красный — всё остальное.
+client.focused          #5ef6ff #172c2e #5ef6ff #ff6159   #5ef6ff
+client.focused_inactive #ae3b36 #121221 #ae3b36 #ae3b36   #ae3b36
+client.unfocused        #431618 #0e0e17 #ae3b36 #121221   #431618
+client.urgent           #ff3e34 #8e272a #ffffff #ff3e34   #ff3e34
+client.placeholder      #000000 #0e0e17 #ffffff #000000   #0e0e17
+client.background       #0e0e17
 
 # start a terminal
 set $terminal kitty
