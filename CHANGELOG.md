@@ -3,6 +3,14 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.0.0 — 2026-10-18
+
+_Cyberpunk 2077 HUD palette across the desktop and apps, koi lanterns wallpaper_
+
+- fix(scripts): install the actual latest Telegram release
+- feat(theme): retint the desktop to the Cyberpunk 2077 HUD palette
+- feat(theme): carry the palette into GTK, Qt, browsers and apps
+
 ## v3.0.1 — 2026-09-27
 
 _translucent bar and matching terminal colour_
