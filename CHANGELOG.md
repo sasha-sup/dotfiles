@@ -3,6 +3,13 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.0 — 2026-10-18
+
+_One-command system update script behind the update alias_
+
+- feat(scripts): add apt-update.sh for a one-command system update
+- feat(zsh): point the update alias at apt-update.sh
+
 ## v4.0.0 — 2026-10-18
 
 _Cyberpunk 2077 HUD palette across the desktop and apps, koi lanterns wallpaper_
