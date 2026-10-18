@@ -68,10 +68,12 @@ Plus `polybar/wifi-menu.sh` — rofi-based wifi picker launched from the polybar
 ## Dependencies
 
 ```bash
-sudo apt install i3 polybar picom kitty rofi feh flameshot \
-    blueman network-manager brightnessctl pulseaudio-utils \
-    fonts-jetbrains-mono fonts-noto-color-emoji fzf
+sudo apt install git curl zsh i3 polybar picom kitty rofi feh flameshot dunst \
+    xss-lock i3lock autorandr blueman network-manager brightnessctl \
+    pulseaudio-utils fonts-noto-color-emoji fzf
 ```
+
+JetBrainsMono Nerd Font is not a package: `install.sh` fetches it from the nerd-fonts release.
 
 ## Install
 
@@ -91,6 +93,12 @@ Every tracked file is symlinked into place, so the live config and the repo are 
 - Files holding personal data are never tracked and never symlinked: `~/.config/dotfiles.env` and `~/.zshrc.local` are seeded once from a template and then left alone.
 - `scripts/dotfiles-version.sh` is copied, with `@DOTFILES_DIR@` expanded to the repo path. It has to survive `switch` onto a version older than itself, where a symlink would dangle and leave no way to run `back`. Because it is a copy, rerun `./install.sh` after editing it.
 - `etc/` is copied into `/etc` with `sudo`, because root should not follow a symlink into a tree the user can rewrite, and `/etc` must keep working if this repo is moved or unmounted. These are copies too, so rerun `./install.sh` after editing them.
+
+Firefox and Thunderbird get their theme only in a profile that already exists, so on a fresh system
+open each once, close it, and rerun `./install.sh`. Two apps cannot be themed from a file on disk:
+load `chrome-theme/` in Chrome via `chrome://extensions` → Developer mode → Load unpacked, and open
+`telegram/cyberdeck.tdesktop-palette` from any Telegram chat and press Apply. Log out and back in
+once so `~/.xprofile` sets the Qt theme for Dolphin.
 
 If a real file already exists where a symlink should go, `install.sh` moves it to `<file>.bak-<timestamp>` instead of deleting it, then links. Rerunning the script is safe and idempotent.
 

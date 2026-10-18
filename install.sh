@@ -280,6 +280,23 @@ for font in "$DOTFILES_DIR"/fonts/*.ttf; do
     [ -e "$font" ] || continue
     link "$font" "$FONT_DIR/$(basename "$font")"
 done
+# JetBrainsMono Nerd Font carries the bar's icons and every UI font here; the
+# Debian fonts-jetbrains-mono package has no icon glyphs. 96 files, too many to
+# track, so it comes from the nerd-fonts release, checked against its SHA-256.txt.
+if ! fc-list | grep -q 'JetBrainsMono Nerd Font'; then
+    echo "Installing JetBrainsMono Nerd Font..."
+    nf_tmp="$(mktemp -d)"
+    nf_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
+    if curl -fsSL -o "$nf_tmp/JetBrainsMono.tar.xz" "$nf_url/JetBrainsMono.tar.xz" &&
+       curl -fsSL -o "$nf_tmp/SHA-256.txt" "$nf_url/SHA-256.txt" &&
+       (cd "$nf_tmp" && grep ' JetBrainsMono\.tar\.xz$' SHA-256.txt | sha256sum -c --quiet -); then
+        mkdir -p "$FONT_DIR"
+        tar -xJf "$nf_tmp/JetBrainsMono.tar.xz" -C "$FONT_DIR" --wildcards '*.ttf'
+    else
+        echo "WARNING: JetBrainsMono Nerd Font download or checksum failed. Get it by hand from $nf_url/JetBrainsMono.tar.xz into $FONT_DIR"
+    fi
+    rm -rf "$nf_tmp"
+fi
 fc-cache -f "$FONT_DIR" >/dev/null
 
 # --- Zsh + Oh My Zsh ---
