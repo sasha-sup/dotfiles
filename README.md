@@ -48,6 +48,7 @@ Distributed into `~/.local/bin/` by `install.sh`. Referenced from i3 and zshrc b
 | `vpn.sh` | Launch VPN client |
 | `mount-external-hdd.sh` | Toggle LUKS-encrypted external drive (UUID from env) |
 | `start-vms.sh` | Toggle libvirt VMs on one tabbed i3 workspace (names/workspace from env) |
+| `apt-update.sh` | System update (`update` alias): apt, oh-my-zsh, npm globals, Claude Code, uv, rustup; reports firmware and pending reboot |
 | `telega-update.sh` | Update Telegram Desktop |
 | `ledger-install.sh` | Install/update Ledger Live Desktop AppImage into `~/.local/bin/` (sha512-verified against the official feed) |
 | `py-venv.sh` | Create a Python venv in a given project dir |
