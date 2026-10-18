@@ -3,6 +3,14 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.1 — 2026-10-18
+
+_Fresh installs get the Nerd Font and full dependency list; screenshots of the current look_
+
+- fix(install): fetch JetBrainsMono Nerd Font and list every dependency
+- fix(screenshots): keep the local IP out of the fastfetch shot
+- chore(screenshots): retake on the Cyberpunk HUD rice
+
 ## v4.1.0 — 2026-10-18
 
 _One-command system update script behind the update alias_
