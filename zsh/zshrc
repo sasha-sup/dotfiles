@@ -108,7 +108,7 @@ alias ll="ls -lah"
 
 alias alias-help='grep "^alias" ~/.zshrc | sed -E "s/^alias\s*([^=]+)=(.*)$/\1: \2/"'
 
-alias update='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
+alias update="$HOME/.local/bin/apt-update.sh"
 alias apt="sudo apt"
 alias shutdown="sudo shutdown -P now"
 alias reboot="systemctl reboot"
