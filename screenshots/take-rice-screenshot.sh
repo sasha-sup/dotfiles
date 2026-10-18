@@ -36,8 +36,9 @@ i3-msg "focus output $MONITOR"
 i3-msg "workspace 6"
 sleep 0.5
 
-# Left: fastfetch
-$TERMINAL --title "fastfetch" -e bash -c "fastfetch; read -r" &
+# Left: fastfetch. The default module list minus LocalIp: the address is
+# personal data and ended up in two published shots.
+$TERMINAL --title "fastfetch" -e bash -c "fastfetch -s Title:Separator:OS:Host:Kernel:Uptime:Packages:Shell:Display:DE:WM:WMTheme:Theme:Icons:Font:Cursor:Terminal:TerminalFont:CPU:GPU:Memory:Swap:Disk:Battery:PowerAdapter:Locale:Break:Colors; read -r" &
 sleep 1
 
 # Split right
