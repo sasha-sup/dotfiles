@@ -1,0 +1,47 @@
+/* Firefox UI in the bar's palette (Cyberpunk 2077 HUD colours, see
+ * polybar/config.ini). Only the browser frame, tabs, toolbar and menus;
+ * web pages keep their own colours. Needs the pref in firefox/user.js. */
+
+:root {
+    --lwt-accent-color: #0e0e17 !important;
+    --lwt-text-color: #ff6159 !important;
+    --toolbar-bgcolor: #121221 !important;
+    --toolbar-color: #c0c8cf !important;
+    --toolbarbutton-icon-fill: #ff6159 !important;
+    --toolbar-field-background-color: #0e0e17 !important;
+    --toolbar-field-color: #c0c8cf !important;
+    --toolbar-field-focus-background-color: #0e0e17 !important;
+    --toolbar-field-focus-color: #c0c8cf !important;
+    --toolbar-field-focus-border-color: #5ef6ff !important;
+    /* cyan marks the selected tab, as in the bar and rofi */
+    --tab-selected-bgcolor: #172c2e !important;
+    --tab-selected-textcolor: #5ef6ff !important;
+    --arrowpanel-background: #121221 !important;
+    --arrowpanel-color: #c0c8cf !important;
+    --arrowpanel-border-color: #ae3b36 !important;
+    --sidebar-background-color: #121221 !important;
+    --sidebar-text-color: #ff6159 !important;
+    --focus-outline-color: #5ef6ff !important;
+}
+
+#navigator-toolbox,
+#TabsToolbar,
+#titlebar {
+    background-color: #0e0e17 !important;
+}
+
+/* --toolbar-bgcolor alone left the address bar row grey on 153 ESR */
+#nav-bar,
+#PersonalToolbar,
+#FindToolbar {
+    background-color: #121221 !important;
+    background-image: none !important;
+}
+
+.tabbrowser-tab:not([visuallyselected]) .tab-label {
+    color: #ff6159 !important;
+}
+
+.tab-background:is([selected], [multiselected]) {
+    background: #172c2e !important;
+}

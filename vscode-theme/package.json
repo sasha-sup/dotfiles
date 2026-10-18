@@ -1,0 +1,14 @@
+{
+  "name": "cyberdeck-theme",
+  "displayName": "Cyberdeck",
+  "description": "Cyberpunk 2077 HUD palette, matching polybar, rofi, i3 and kitty",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": { "vscode": "^1.70.0" },
+  "categories": ["Themes"],
+  "contributes": {
+    "themes": [
+      { "label": "Cyberdeck", "uiTheme": "vs-dark", "path": "./themes/cyberdeck-color-theme.json" }
+    ]
+  }
+}

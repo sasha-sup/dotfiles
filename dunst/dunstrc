@@ -1,0 +1,43 @@
+# Notifications in the bar's palette (Cyberpunk 2077 HUD colours, see
+# polybar/config.ini). Only what differs from /etc/xdg/dunst/dunstrc is set;
+# dunst merges this over the system file.
+
+[global]
+    origin = top-right
+    # bar is 8 + 29 px tall; same 8 px gap below it as between windows
+    offset = (8, 45)
+    width = 360
+    height = (0, 300)
+    padding = 10
+    horizontal_padding = 12
+    frame_width = 2
+    gap_size = 6
+    separator_color = frame
+    corner_radius = 0
+    font = JetBrainsMono Nerd Font 11
+    format = "<b>%s</b>\n%b"
+    icon_position = left
+    max_icon_size = 48
+    progress_bar_frame_width = 0
+    progress_bar_corner_radius = 0
+    highlight = "#5ef6ff"
+
+[urgency_low]
+    background = "#0e0e17"
+    foreground = "#ae3b36"
+    frame_color = "#431618"
+    timeout = 5
+
+[urgency_normal]
+    background = "#0e0e17"
+    foreground = "#c0c8cf"
+    frame_color = "#ff6159"
+    timeout = 8
+
+# battery alerts use dunstify without -u, so they land in normal; critical is
+# for whatever sets urgency itself (e.g. a failed backup)
+[urgency_critical]
+    background = "#431618"
+    foreground = "#ffffff"
+    frame_color = "#ff3e34"
+    timeout = 0

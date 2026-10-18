@@ -1,0 +1,26 @@
+/* GTK3 apps in the bar's palette (Cyberpunk 2077 HUD colours, see
+ * polybar/config.ini). Qt apps such as Dolphin read their palette through
+ * the qgtk3 platform theme, so this colours them too. These are the names
+ * Adwaita for GTK3 builds every widget colour from. */
+
+@define-color theme_bg_color              #121221;
+@define-color theme_fg_color              #c0c8cf;
+@define-color theme_base_color            #0e0e17;
+@define-color theme_text_color            #c0c8cf;
+/* cyan marks what is selected, as in the bar and rofi */
+@define-color theme_selected_bg_color     #172c2e;
+@define-color theme_selected_fg_color     #5ef6ff;
+@define-color insensitive_bg_color        #121221;
+@define-color insensitive_fg_color        #ae3b36;
+@define-color insensitive_base_color      #0e0e17;
+@define-color theme_unfocused_bg_color    #0e0e17;
+@define-color theme_unfocused_fg_color    #ae3b36;
+@define-color theme_unfocused_base_color  #0e0e17;
+@define-color theme_unfocused_text_color  #c0c8cf;
+@define-color theme_unfocused_selected_bg_color #172c2e;
+@define-color theme_unfocused_selected_fg_color #5ef6ff;
+@define-color borders                     #ae3b36;
+@define-color unfocused_borders           #431618;
+@define-color warning_color               #ffd741;
+@define-color error_color                 #ff3e34;
+@define-color success_color               #1ded83;

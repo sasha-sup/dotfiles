@@ -1,0 +1,49 @@
+/* libadwaita apps (Nautilus and the rest of GTK4) in the bar's palette.
+ * libadwaita ignores GTK themes but reads these named colours from here.
+ * Values are the Cyberpunk 2077 HUD colours used in polybar/config.ini;
+ * they only look right with color-scheme set to prefer-dark (install.sh). */
+
+/* cyan marks what is selected, as in the bar and rofi */
+@define-color accent_color      #5ef6ff;
+@define-color accent_bg_color   #172c2e;
+@define-color accent_fg_color   #5ef6ff;
+
+@define-color destructive_color    #ff3e34;
+@define-color destructive_bg_color #8e272a;
+@define-color destructive_fg_color #ffffff;
+@define-color success_color        #1ded83;
+@define-color warning_color        #ffd741;
+@define-color error_color          #ff3e34;
+
+@define-color window_bg_color   #0e0e17;
+@define-color window_fg_color   #c0c8cf;
+@define-color view_bg_color     #0e0e17;
+@define-color view_fg_color     #c0c8cf;
+
+/* the header bar is the one red surface, as the HUD frames its panels */
+@define-color headerbar_bg_color       #121221;
+@define-color headerbar_fg_color       #ff6159;
+@define-color headerbar_border_color   #ae3b36;
+@define-color headerbar_backdrop_color #0e0e17;
+@define-color headerbar_shade_color    rgba(0, 0, 0, 0.5);
+
+@define-color sidebar_bg_color          #121221;
+@define-color sidebar_fg_color          #ff6159;
+@define-color sidebar_backdrop_color    #0e0e17;
+@define-color sidebar_shade_color       rgba(0, 0, 0, 0.5);
+@define-color secondary_sidebar_bg_color #121221;
+@define-color secondary_sidebar_fg_color #ff6159;
+
+@define-color card_bg_color     #161625;
+@define-color card_fg_color     #c0c8cf;
+@define-color dialog_bg_color   #121221;
+@define-color dialog_fg_color   #c0c8cf;
+@define-color popover_bg_color  #121221;
+@define-color popover_fg_color  #c0c8cf;
+@define-color thumbnail_bg_color #161625;
+@define-color thumbnail_fg_color #c0c8cf;
+
+/* square corners, same as picom and rofi */
+window, .background, headerbar, popover > contents, .card, button, entry {
+    border-radius: 0;
+}

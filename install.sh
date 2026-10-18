@@ -57,6 +57,69 @@ link "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
 link "$DOTFILES_DIR/autorandr/postswitch.d/10-single-external-output" \
      "$HOME/.config/autorandr/postswitch.d/10-single-external-output"
 
+# --- App colours ---
+# The same palette for apps that do not read the bar's config. The GTK overrides
+# only look right on a dark base, so the colour scheme is switched to dark too.
+link "$DOTFILES_DIR/gtk/gtk-3.0/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+link "$DOTFILES_DIR/gtk/gtk-4.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || true
+# Dolphin reads this only through the plasma-integration Qt theme, which
+# x11/xprofile selects for the session; without both the scheme has no effect.
+if ! dpkg -s plasma-integration >/dev/null 2>&1; then
+    echo "Installing plasma-integration..."
+    sudo apt install -y plasma-integration || \
+        echo "WARNING: plasma-integration install failed. Run manually: sudo apt install plasma-integration"
+fi
+link "$DOTFILES_DIR/x11/xprofile"         "$HOME/.xprofile"
+link "$DOTFILES_DIR/xdg-desktop-portal/i3-portals.conf" \
+     "$HOME/.config/xdg-desktop-portal/i3-portals.conf"
+link "$DOTFILES_DIR/kde/Cyberdeck.colors" "$HOME/.local/share/color-schemes/Cyberdeck.colors"
+# The Qt theme reads the colours from kdeglobals itself, not from the scheme
+# file, so every key is copied in, the way Plasma applies a scheme. kdeglobals
+# is not linked: KDE apps rewrite it with their own state.
+if command -v kwriteconfig6 >/dev/null 2>&1; then
+    group=
+    while IFS= read -r line; do
+        case "$line" in
+            ''|'#'*) ;;
+            '['*) group=${line#\[}; group=${group%\]} ;;
+            *=*)
+                key=${line%%=*}
+                if [[ "$group" == *']['* ]]; then
+                    kwriteconfig6 --file kdeglobals --group "${group%%]*}" --group "${group#*[}" \
+                        --key "$key" "${line#*=}"
+                else
+                    kwriteconfig6 --file kdeglobals --group "$group" --key "$key" "${line#*=}"
+                fi ;;
+        esac
+    done < "$DOTFILES_DIR/kde/Cyberdeck.colors"
+    kwriteconfig6 --file kdeglobals --group UI --key ColorScheme Cyberdeck
+fi
+# Firefox reads userChrome.css only from the profile it starts with, and
+# installs.ini names that profile, so it is looked up rather than hardcoded.
+# Chrome has no such file: load chrome-theme/ once via chrome://extensions.
+# VS Code picks up any extension folder dropped here; the theme itself is
+# selected in its own settings.json, which this repo does not manage.
+link "$DOTFILES_DIR/vscode-theme" "$HOME/.vscode/extensions/local.cyberdeck-theme-1.0.0"
+link "$DOTFILES_DIR/dunst/dunstrc" "$HOME/.config/dunst/dunstrc"
+# flameshot rewrites its own ini, so the colours are set through its CLI
+# instead of linking the file
+if command -v flameshot >/dev/null 2>&1; then
+    flameshot config --maincolor '#ff6159' --contrastcolor '#0e0e17' || true
+fi
+tb_profile=$(awk -F= '/^Default=/{print $2; exit}' "$HOME/.thunderbird/installs.ini" 2>/dev/null || true)
+if [ -n "$tb_profile" ]; then
+    link "$DOTFILES_DIR/thunderbird/userChrome.css" "$HOME/.thunderbird/$tb_profile/chrome/userChrome.css"
+    link "$DOTFILES_DIR/thunderbird/user.js"        "$HOME/.thunderbird/$tb_profile/user.js"
+fi
+# Telegram has no config file for this: apply telegram/cyberdeck.tdesktop-palette
+# once by opening it from any chat.
+ff_profile=$(awk -F= '/^Default=/{print $2; exit}' "$HOME/.mozilla/firefox/installs.ini" 2>/dev/null || true)
+if [ -n "$ff_profile" ]; then
+    link "$DOTFILES_DIR/firefox/userChrome.css" "$HOME/.mozilla/firefox/$ff_profile/chrome/userChrome.css"
+    link "$DOTFILES_DIR/firefox/user.js"        "$HOME/.mozilla/firefox/$ff_profile/user.js"
+fi
+
 # --- Keyboard layout (system-wide) ---
 # Xorg re-reads this on every keyboard device add, so it overrides the setxkbmap
 # that i3 runs at startup: a Bluetooth keyboard reconnect was enough to bring the
@@ -103,6 +166,13 @@ link "$DOTFILES_DIR/wallpapers/914670.jpg"                "$HOME/Pictures/wallpa
 link "$DOTFILES_DIR/wallpapers/914670-lock-1920x1200.png" "$HOME/Pictures/wallpapers/914670-lock-1920x1200.png"
 link "$DOTFILES_DIR/wallpapers/1zvHQuC4.png"                "$HOME/Pictures/wallpapers/1zvHQuC4.png"
 link "$DOTFILES_DIR/wallpapers/1zvHQuC4-lock-1920x1200.png" "$HOME/Pictures/wallpapers/1zvHQuC4-lock-1920x1200.png"
+# 3440x1440 ultrawide; the lock copy is the same crop feh --bg-fill shows, plus
+# a dark plate where lock.sh draws its text (see the comment there):
+#   magick koi-lanterns.jpg -resize 1920x1200^ -gravity center -extent 1920x1200 \
+#          -fill '#0e0e17e0' -stroke '#ae3b36' -strokewidth 2 \
+#          -draw 'rectangle 660,390 1260,830' koi-lanterns-lock-1920x1200.png
+link "$DOTFILES_DIR/wallpapers/koi-lanterns.jpg"                "$HOME/Pictures/wallpapers/koi-lanterns.jpg"
+link "$DOTFILES_DIR/wallpapers/koi-lanterns-lock-1920x1200.png" "$HOME/Pictures/wallpapers/koi-lanterns-lock-1920x1200.png"
 
 # --- Scripts ---
 SCRIPTS_DIR="$HOME/.local/bin"

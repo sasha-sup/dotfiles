@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Cyberdeck",
+  "version": "1.0",
+  "description": "Cyberpunk 2077 HUD palette, matching polybar, rofi, i3 and kitty",
+  "theme": {
+    "colors": {
+      "frame": [14, 14, 23],
+      "frame_inactive": [14, 14, 23],
+      "frame_incognito": [14, 14, 23],
+      "frame_incognito_inactive": [14, 14, 23],
+      "background_tab": [14, 14, 23],
+      "background_tab_inactive": [14, 14, 23],
+      "toolbar": [18, 18, 33],
+      "tab_text": [94, 246, 255],
+      "tab_background_text": [255, 97, 89],
+      "tab_background_text_inactive": [174, 59, 54],
+      "toolbar_text": [192, 200, 207],
+      "toolbar_button_icon": [255, 97, 89],
+      "bookmark_text": [192, 200, 207],
+      "omnibox_background": [14, 14, 23],
+      "omnibox_text": [192, 200, 207],
+      "button_background": [0, 0, 0, 0],
+      "ntp_background": [14, 14, 23],
+      "ntp_text": [192, 200, 207],
+      "ntp_link": [94, 246, 255],
+      "ntp_header": [255, 97, 89]
+    },
+    "properties": {
+      "ntp_background_alignment": "center"
+    }
+  }
+}

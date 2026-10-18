@@ -1,0 +1,45 @@
+/* Thunderbird UI in the bar's palette (Cyberpunk 2077 HUD colours, see
+ * polybar/config.ini). Same engine as Firefox, so the same approach as
+ * firefox/userChrome.css. Needs the pref in thunderbird/user.js. */
+
+:root {
+    --lwt-accent-color: #0e0e17 !important;
+    --lwt-text-color: #ff6159 !important;
+    --toolbar-bgcolor: #121221 !important;
+    --toolbar-color: #c0c8cf !important;
+    --toolbarbutton-icon-fill: #ff6159 !important;
+    --toolbar-field-background-color: #0e0e17 !important;
+    --toolbar-field-color: #c0c8cf !important;
+    --toolbar-field-focus-border-color: #5ef6ff !important;
+    --tab-selected-bgcolor: #172c2e !important;
+    --tab-selected-textcolor: #5ef6ff !important;
+    --arrowpanel-background: #121221 !important;
+    --arrowpanel-color: #c0c8cf !important;
+    --arrowpanel-border-color: #ae3b36 !important;
+    --focus-outline-color: #5ef6ff !important;
+    /* the spaces bar, folder pane and message list */
+    --spaces-bg-color: #0e0e17 !important;
+    --sidebar-background: #121221 !important;
+    --sidebar-text-color: #ff6159 !important;
+    --foldertree-background: #121221 !important;
+    --tree-view-bg: #0e0e17 !important;
+    --tree-card-background: #0e0e17 !important;
+    --layout-background-0: #0e0e17 !important;
+    --layout-background-1: #121221 !important;
+    --layout-color-1: #c0c8cf !important;
+    --splitter-color: #431618 !important;
+    --selected-item-color: #172c2e !important;
+    --selected-item-text-color: #5ef6ff !important;
+}
+
+#navigator-toolbox,
+#titlebar,
+#tabs-toolbar,
+unified-toolbar,
+#unifiedToolbar {
+    background-color: #0e0e17 !important;
+}
+
+.tabmail-tab:not([selected]) .tab-label {
+    color: #ff6159 !important;
+}

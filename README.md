@@ -9,13 +9,13 @@ i3wm rice on Debian Trixie (ThinkPad T14)
 
 - **WM:** i3
 - **Bar:** Polybar
-- **Compositor:** Picom (shadows, fading, rounded corners)
+- **Compositor:** Picom (shadows, fading, square corners, no blur)
 - **Terminal:** Kitty
 - **Launcher:** Rofi
 - **Shell:** Zsh + Oh My Zsh + Powerlevel10k + fzf
 - **Font:** JetBrainsMono Nerd Font
 - **Emoji:** Noto Color Emoji via fontconfig fallback
-- **Wallpaper:** Neon Hong Kong street at night (`wallpapers/914670.jpg`)
+- **Wallpaper:** Koi and paper lanterns over a Night City street (`wallpapers/koi-lanterns.jpg`)
 
 ## Polybar Modules
 
@@ -263,6 +263,16 @@ dotfiles/
 │   ├── modprobe.d/          # fan_control=1
 │   ├── modules-load.d/      # load thinkpad_acpi before thinkfan starts
 │   └── systemd/system/thinkfan.service.d/   # Restart=on-failure
+├── gtk/                     # GTK3/GTK4 colour overrides (Nautilus and other GTK apps)
+├── firefox/                 # userChrome.css + user.js, linked into the default profile
+├── chrome-theme/            # Chrome theme; load once via chrome://extensions > Load unpacked
+├── vscode-theme/            # "Cyberdeck" VS Code theme, linked into ~/.vscode/extensions/
+├── dunst/dunstrc            # notifications
+├── thunderbird/             # userChrome.css + user.js, linked into the default profile
+├── telegram/                # palette; send to Saved Messages, open it, Apply
+├── kde/                     # KDE colour scheme for Dolphin (needs plasma-integration)
+├── x11/xprofile             # session env (QT_QPA_PLATFORMTHEME=kde), linked to ~/.xprofile
+├── xdg-desktop-portal/      # pins the GTK portal backend for the i3 session
 ├── wallpapers/
 ├── screenshots/
 │   └── take-rice-screenshot.sh  # regenerates clean.png and busy.png

@@ -1,0 +1,6 @@
+# Sourced by GDM's Xsession before i3 starts, so everything i3 launches
+# inherits it. Linked to ~/.xprofile by install.sh.
+
+# Qt apps (Dolphin) take their palette from the KDE colour scheme in
+# kde/Cyberdeck.colors only through the plasma-integration theme plugin.
+export QT_QPA_PLATFORMTHEME=kde
