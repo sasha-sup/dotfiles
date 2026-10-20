@@ -97,6 +97,9 @@ tiling_drag modifier titlebar
 # Убрать заголовки окон, тонкая рамка
 default_border pixel 2
 default_floating_border pixel 2
+# kitty, VSCode, Electron просят «без декораций» через _MOTIF_WM_HINTS, и i3
+# ставит им border none — тогда не видно, какое окно в фокусе.
+for_window [all] border pixel 2
 
 # Отступы между окнами.
 # В i3 зазор у края экрана = outer + inner, поэтому outer 0 даёт ровно 8 px
