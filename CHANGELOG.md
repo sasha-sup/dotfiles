@@ -3,6 +3,12 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.2 — 2026-10-20
+
+_Every window gets a border, so the focused one is always visible_
+
+- fix(i3): force a border on windows that ask for none
+
 ## v4.1.1 — 2026-10-18
 
 _Fresh installs get the Nerd Font and full dependency list; screenshots of the current look_
