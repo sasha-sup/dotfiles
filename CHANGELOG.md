@@ -3,6 +3,12 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.5 — 2026-10-26
+
+_Lock screen text sits on its plate on the external monitor too_
+
+- fix(lock): keep the lock text on its plate on the external monitor
+
 ## v4.1.4 — 2026-10-26
 
 _Notifications appear on the external monitor when one is connected_
