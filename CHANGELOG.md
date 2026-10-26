@@ -3,6 +3,13 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.6 — 2026-10-26
+
+_Skip oh-my-codex in updates, shutdown accepts arguments_
+
+- fix(scripts): stop updating oh-my-codex in apt-update
+- fix(zsh): let shutdown take arguments
+
 ## v4.1.5 — 2026-10-26
 
 _Lock screen text sits on its plate on the external monitor too_
