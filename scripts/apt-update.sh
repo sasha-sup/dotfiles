@@ -90,10 +90,11 @@ if command -v omc >/dev/null; then
     run_step "oh-my-claudecode" omc update
 fi
 
-if command -v omx >/dev/null; then
-    log_section "Updating oh-my-codex..."
-    run_step "oh-my-codex" omx update
-fi
+# oh-my-codex is unused, and its update asks interactive questions. Disabled.
+# if command -v omx >/dev/null; then
+#     log_section "Updating oh-my-codex..."
+#     run_step "oh-my-codex" omx update
+# fi
 
 if command -v uv >/dev/null; then
     log_section "Updating uv tools..."
