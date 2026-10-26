@@ -3,6 +3,12 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.4 — 2026-10-26
+
+_Notifications appear on the external monitor when one is connected_
+
+- feat(dunst): show notifications on the external monitor
+
 ## v4.1.3 — 2026-10-26
 
 _Laptop panel sits to the right of the external monitor_
