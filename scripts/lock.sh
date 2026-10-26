@@ -50,6 +50,10 @@ fi
 # --indicator keeps it on screen instead of only from the first keypress, so the
 # lock screen always shows something to type into.
 #
+# --ind-pos pins ix:iy to the image's own centre (y+600), not the output's.
+# The default y+h/2 is 540 on the 1080-tall external monitor, which lifts every
+# text 60px against the baked-in plate and runs its top edge through the clock.
+#
 # Every text is placed by hand off ix:iy, the indicator centre. No expression
 # uses r any more — there is no radius in bar mode. --bar-pos takes the bar's
 # left edge, not its centre, hence the -210 for a 420-wide bar.
@@ -87,7 +91,7 @@ fi
 exec i3lock-color \
     --nofork \
     --image "$image" --tiling \
-    --clock --indicator \
+    --clock --indicator --ind-pos "x+w/2:y+600" \
     --bar-indicator --bar-count 1 --bar-orientation horizontal \
     --bar-total-width 420 --bar-base-width 4 --bar-max-height 20 \
     --bar-pos "ix-210:iy+120" --bar-color 8e272acc \
