@@ -3,6 +3,12 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.3 — 2026-10-26
+
+_Laptop panel sits to the right of the external monitor_
+
+- fix(display): put the laptop panel to the right of the external monitor
+
 ## v4.1.2 — 2026-10-20
 
 _Every window gets a border, so the focused one is always visible_
