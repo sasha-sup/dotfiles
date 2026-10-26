@@ -3,6 +3,9 @@
 # dunst merges this over the system file.
 
 [global]
+    # The panel is primary, so it is always monitor 0 and an external screen on
+    # any port is 1. With no external screen dunst falls back to 0 on its own.
+    monitor = 1
     origin = top-right
     # bar is 8 + 29 px tall; same 8 px gap below it as between windows
     offset = (8, 45)
