@@ -110,7 +110,11 @@ alias alias-help='grep "^alias" ~/.zshrc | sed -E "s/^alias\s*([^=]+)=(.*)$/\1: 
 
 alias update="$HOME/.local/bin/apt-update.sh"
 alias apt="sudo apt"
-alias shutdown="sudo shutdown -P now"
+# No arguments: power off now. Otherwise pass them through, e.g. `shutdown -r +10`.
+# `function name` form: zsh would alias-expand `shutdown()` if the old alias is still loaded.
+function shutdown {
+    if (( $# )); then sudo shutdown "$@"; else sudo shutdown -P now; fi
+}
 alias reboot="systemctl reboot"
 
 alias virsh="virsh --connect qemu:///system"
