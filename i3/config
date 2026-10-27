@@ -200,6 +200,12 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
+# A newly connected output gets the lowest free workspace number, and with 1-10
+# all holding windows that was 11 every time HDMI came back. Pinning 1 to the
+# external monitor makes i3 move it there on hotplug instead; eDP-1 is the
+# fallback while the monitor is unplugged.
+workspace $ws1 output HDMI-1 eDP-1
+
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
 bindsym $mod+2 workspace number $ws2
