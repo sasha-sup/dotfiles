@@ -36,6 +36,22 @@ fi
 external=$(printf '%s\n' "$query" | awk -v panel="$panel" '$2 == "connected" && $1 != panel { print $1; exit }')
 target="$panel"
 
+# With the external monitor plugged in the laptop stands upright in a dock that
+# presses on the touchpad, so the touchpad is only live without the monitor.
+# This runs before the "nothing to do" exits: a hotplug that leaves the layout
+# alone still has to flip it. Matched by name, because xinput renumbers ids;
+# a disabled device is listed as floating with a "∼ " prefix that set-prop
+# does not accept, so it is stripped.
+if command -v xinput >/dev/null 2>&1; then
+    touchpad=$(xinput list --name-only | sed 's/^∼ //' | grep -m1 -i touchpad || true)
+    if [ -n "$touchpad" ]; then
+        if [ -n "$external" ]; then state=0; else state=1; fi
+        xinput set-prop "$touchpad" "Device Enabled" "$state" || true
+    fi
+else
+    echo "xinput is missing, touchpad left as is; install it: sudo apt install xinput" >&2
+fi
+
 # Geometry of one output as xrandr reports it ("1920x1080+0+2160"), empty when
 # the output is off. The mode sits at field 3 or 4 depending on "primary".
 geometry() {

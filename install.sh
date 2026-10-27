@@ -56,6 +56,12 @@ link "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
 # hook that re-asserts the single-external-output rule is shared.
 link "$DOTFILES_DIR/autorandr/postswitch.d/10-single-external-output" \
      "$HOME/.config/autorandr/postswitch.d/10-single-external-output"
+# hdmi-output.sh switches the touchpad off while the external monitor is in.
+if ! dpkg -s xinput >/dev/null 2>&1; then
+    echo "Installing xinput..."
+    sudo apt install -y xinput || \
+        echo "WARNING: xinput install failed. Run manually: sudo apt install xinput"
+fi
 
 # --- App colours ---
 # The same palette for apps that do not read the bar's config. The GTK overrides
