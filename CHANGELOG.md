@@ -3,6 +3,13 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.7 — 2026-10-27
+
+_Touchpad off while docked, no stray workspace 11 on HDMI replug_
+
+- feat(scripts): turn the touchpad off while the external monitor is in
+- fix(i3): stop a replugged monitor from getting workspace 11
+
 ## v4.1.6 — 2026-10-26
 
 _Skip oh-my-codex in updates, shutdown accepts arguments_
