@@ -3,6 +3,12 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.8 — 2026-11-03
+
+_Debian logo replaces the kanji mark on the bar_
+
+- style(polybar): swap the kanji mark for the Debian logo
+
 ## v4.1.7 — 2026-10-27
 
 _Touchpad off while docked, no stray workspace 11 on HDMI replug_
