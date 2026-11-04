@@ -3,6 +3,14 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.9 — 2026-11-04
+
+_Audio recovers from a busy card at boot, apt-update installs new kernels_
+
+- fix(scripts): install new kernel packages in apt-update
+- style(scripts): quiet the oh-my-zsh upgrade output
+- fix(scripts): recover audio when startup leaves no default sink
+
 ## v4.1.8 — 2026-11-03
 
 _Debian logo replaces the kanji mark on the bar_
