@@ -27,7 +27,14 @@ else
     printf '%s%d package(s) to upgrade%s\n' "$BOLD" "${#upgradable[@]}" "$RESET"
 
     log_section "Installing updates..."
-    sudo apt-get upgrade -y
+    # A new Debian kernel is a new package (linux-image-<abi>-amd64), and plain `apt-get upgrade`
+    # never installs new packages: it keeps linux-image-amd64 back and the kernel never arrives.
+    sudo apt-get upgrade -y --with-new-pkgs
+    mapfile -t kept_back < <(apt list --upgradable 2>/dev/null | tail -n +2)
+    if (( ${#kept_back[@]} > 0 )); then
+        printf '  %s\n' "${kept_back[@]}"
+        log_warning "${#kept_back[@]} package(s) kept back, review with: sudo apt full-upgrade"
+    fi
     log_success "Updates installed"
 fi
 
