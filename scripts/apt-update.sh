@@ -54,7 +54,8 @@ run_step() {
 }
 
 update_oh_my_zsh() {
-    ZSH="$HOME/.oh-my-zsh" zsh "$HOME/.oh-my-zsh/tools/upgrade.sh" || return 1
+    # -v minimal: one status line instead of the ASCII logo and the social/sponsor links
+    ZSH="$HOME/.oh-my-zsh" zsh "$HOME/.oh-my-zsh/tools/upgrade.sh" -v minimal || return 1
     # Custom plugins and themes (powerlevel10k, zsh-autosuggestions, ...) are separate git clones.
     local repo
     for repo in "$HOME"/.oh-my-zsh/custom/{plugins,themes}/*/; do
