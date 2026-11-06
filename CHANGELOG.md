@@ -3,6 +3,12 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.1.10 — 2026-11-07
+
+_Shell history stays out of the daily backup_
+
+- fix(scripts): stop backing up zsh history
+
 ## v4.1.9 — 2026-11-04
 
 _Audio recovers from a busy card at boot, apt-update installs new kernels_
