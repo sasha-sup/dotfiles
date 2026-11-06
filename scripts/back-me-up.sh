@@ -40,8 +40,9 @@ crontab -l > "$BASE_DIR/crontab_$DATE.txt" 2>/dev/null || \
 dpkg --get-selections > "$BASE_DIR/dpkg_selections_$DATE.txt"
 apt-mark showmanual   > "$BASE_DIR/apt_manual_$DATE.txt"
 
-# Zsh history (valuable muscle memory)
-[ -f "$HOME/.zsh_history" ] && cp "$HOME/.zsh_history" "$BASE_DIR/zsh_history_$DATE"
+# Zsh history is not backed up: commands carry tokens and passwords typed
+# inline, and push-my-dir.sh pushes this directory to a git remote in plain
+# text, where every snapshot stays in the history.
 
 # --- Encrypted secrets (GPG) ---
 GPG_RECIPIENT="${GPG_RECIPIENT:?GPG_RECIPIENT not set (see ~/.config/dotfiles.env)}"
