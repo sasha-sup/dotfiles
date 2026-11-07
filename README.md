@@ -51,6 +51,7 @@ Distributed into `~/.local/bin/` by `install.sh`. Referenced from i3 and zshrc b
 | `apt-update.sh` | System update (`update` alias): apt, oh-my-zsh, npm globals, Claude Code, uv, rustup; reports firmware and pending reboot |
 | `telega-update.sh` | Update Telegram Desktop |
 | `ledger-install.sh` | Install/update Ledger Live Desktop AppImage into `~/.local/bin/` (sha512-verified against the official feed) |
+| `nvim-install.sh` | Install/update Neovim and the tree-sitter CLI from GitHub releases into `~/.local/` (sha256-verified); apt versions are too old for LazyVim |
 | `py-venv.sh` | Create a Python venv in a given project dir |
 | `kube-context.sh` / `kube-exec.sh` | Pick kube context / exec into a pod by prefix |
 | `ssh-me.sh` | Pick from personal SSH-connection scripts (dir from env) |
@@ -276,6 +277,7 @@ dotfiles/
 ├── firefox/                 # userChrome.css + user.js, linked into the default profile
 ├── chrome-theme/            # Chrome theme; load once via chrome://extensions > Load unpacked
 ├── vscode-theme/            # "Cyberdeck" VS Code theme, linked into ~/.vscode/extensions/
+├── nvim/                    # LazyVim starter, Cyberdeck colorscheme; linked to ~/.config/nvim
 ├── dunst/dunstrc            # notifications
 ├── thunderbird/             # userChrome.css + user.js, linked into the default profile
 ├── telegram/                # palette; send to Saved Messages, open it, Apply

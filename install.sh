@@ -50,6 +50,9 @@ link "$DOTFILES_DIR/polybar/wifi-menu.sh" "$HOME/.config/polybar/wifi-menu.sh"
 link "$DOTFILES_DIR/picom/picom.conf"     "$HOME/.config/picom/picom.conf"
 link "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
 link "$DOTFILES_DIR/rofi/config.rasi"     "$HOME/.config/rofi/config.rasi"
+# The whole directory, so lazy-lock.json written by :Lazy lands in the repo and
+# pins the same plugin commits on the next machine.
+link "$DOTFILES_DIR/nvim"                 "$HOME/.config/nvim"
 link "$DOTFILES_DIR/fontconfig/conf.d/01-prefer-color-emoji.conf" \
      "$HOME/.config/fontconfig/conf.d/01-prefer-color-emoji.conf"
 # Saved autorandr profiles are EDID-specific and stay machine-local, but the
@@ -225,6 +228,16 @@ if [ ! -x "$HOME/.local/bin/ledger" ]; then
     "$DOTFILES_DIR/scripts/ledger-install.sh" || \
         echo "WARNING: Ledger install failed. Run manually: $DOTFILES_DIR/scripts/ledger-install.sh"
 fi
+
+# --- Neovim (LazyVim) ---
+# The pickers search with rg and fd, and nvim-treesitter compiles parsers with
+# the C compiler. Debian names the fd binary fdfind; the pickers look for both.
+if ! command -v rg >/dev/null || ! command -v fdfind >/dev/null || ! command -v cc >/dev/null; then
+    sudo apt install -y ripgrep fd-find build-essential || \
+        echo "WARNING: LazyVim dependencies failed to install. Run manually: sudo apt install ripgrep fd-find build-essential"
+fi
+"$DOTFILES_DIR/scripts/nvim-install.sh" || \
+    echo "WARNING: Neovim install failed. Run manually: $DOTFILES_DIR/scripts/nvim-install.sh"
 
 update-desktop-database "$APPS_DIR" >/dev/null 2>&1 || true
 gtk-update-icon-cache -f -t "$ICONS_DIR" >/dev/null 2>&1 || true
