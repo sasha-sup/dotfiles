@@ -3,6 +3,15 @@
 Versions are git tags. `dotfiles-version.sh switch <tag>` checks one out and reloads
 the desktop; `dotfiles-version.sh back` returns to `master`.
 
+## v4.2.0 — 2026-11-16
+
+_LazyVim with the Cyberdeck colorscheme and inline images; Neovim from GitHub releases_
+
+- feat(nvim): add LazyVim starter with Cyberdeck colorscheme
+- feat(scripts): install Neovim and tree-sitter from GitHub releases
+- feat(nvim): render images inline with snacks.image
+- fix(scripts): leave oh-my-claudecode to omc update
+
 ## v4.1.10 — 2026-11-07
 
 _Shell history stays out of the daily backup_
