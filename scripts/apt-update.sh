@@ -65,11 +65,17 @@ update_oh_my_zsh() {
     done
 }
 
+# Packages with their own updater. A plain `npm install -g` skips what that updater does after the
+# install: `omc update` also syncs the plugin cache, the plugin registry and its hooks, so bumping
+# oh-my-claude-sisyphus here leaves the CLI and the Claude Code plugin on different versions.
+NPM_SELF_UPDATING=(oh-my-claude-sisyphus)
+
 # `npm update -g` stays within the current major version, so install each outdated package @latest.
 update_npm_globals() {
     local -a outdated
     # npm outdated exits 1 when something is outdated; format: path:wanted:current:latest:dependent
-    mapfile -t outdated < <(npm outdated -g --parseable 2>/dev/null | cut -d: -f4 || true)
+    mapfile -t outdated < <(npm outdated -g --parseable 2>/dev/null | cut -d: -f4 \
+        | grep -vE "^($(IFS='|'; echo "${NPM_SELF_UPDATING[*]}"))@" || true)
     if (( ${#outdated[@]} == 0 )); then
         printf '  all global packages are up to date\n'
         return 0
@@ -93,6 +99,9 @@ if command -v claude >/dev/null; then
     run_step "Claude Code" claude update
 fi
 
+# The only updater for oh-my-claudecode: the npm CLI, the plugin cache and the plugin registry move
+# together. Do not add `claude plugin update oh-my-claudecode@omc` next to it: that installs the
+# marketplace's main branch, which runs ahead of the release `omc update` pins the CLI to.
 if command -v omc >/dev/null; then
     log_section "Updating oh-my-claudecode..."
     run_step "oh-my-claudecode" omc update
